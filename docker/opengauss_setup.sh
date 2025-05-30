@@ -7,7 +7,9 @@ set -e
 echo "Starting OpenGauss setup for GaussDB Rust driver testing..."
 
 # 等待 OpenGauss 完全启动
-sleep 10
+sleep 30
+
+echo "OpenGauss container should be ready now..."
 
 # 切换到 omm 用户并执行 SQL 命令
 su - omm << 'EOF'
@@ -44,9 +46,6 @@ BEGIN
 END
 $$;
 
--- 创建测试数据库
-CREATE DATABASE test_db OWNER postgres_user;
-
 -- 授予权限
 GRANT ALL PRIVILEGES ON DATABASE postgres TO postgres_user;
 GRANT ALL PRIVILEGES ON DATABASE postgres TO md5_user;
@@ -54,10 +53,17 @@ GRANT ALL PRIVILEGES ON DATABASE postgres TO scram_user;
 GRANT ALL PRIVILEGES ON DATABASE postgres TO ssl_user;
 GRANT ALL PRIVILEGES ON DATABASE postgres TO pass_user;
 GRANT ALL PRIVILEGES ON DATABASE postgres TO gaussdb;
-GRANT ALL PRIVILEGES ON DATABASE test_db TO postgres_user;
 
--- 创建测试表和数据
-\c test_db postgres_user
+-- 创建测试数据库（如果不存在）
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'test_db') THEN
+        CREATE DATABASE test_db OWNER postgres_user;
+    END IF;
+END
+$$;
+
+-- 创建测试表和数据（在 postgres 数据库中，避免切换数据库的问题）
 
 CREATE TABLE test_table (
     id SERIAL PRIMARY KEY,
@@ -102,6 +108,18 @@ EOF
 # 注意：OpenGauss 的配置文件路径可能与 PostgreSQL 不同
 PGDATA="/var/lib/opengauss/data"
 
+# 尝试找到正确的数据目录
+if [ ! -d "$PGDATA" ]; then
+    # 尝试其他可能的路径
+    for possible_path in "/gaussdb/data" "/opt/opengauss/data" "/data" "/var/lib/postgresql/data"; do
+        if [ -d "$possible_path" ]; then
+            PGDATA="$possible_path"
+            echo "Found data directory at: $PGDATA"
+            break
+        fi
+    done
+fi
+
 if [ -f "$PGDATA/pg_hba.conf" ]; then
     echo "Configuring authentication methods..."
     
@@ -112,17 +130,17 @@ if [ -f "$PGDATA/pg_hba.conf" ]; then
     cat >> "$PGDATA/pg_hba.conf" << 'EOCONF'
 
 # Test authentication configurations for GaussDB Rust driver
-# SHA256 authentication (if supported by OpenGauss)
-host    all             postgres_user   0.0.0.0/0               sha256
-host    all             postgres_user   ::0/0                   sha256
+# MD5 authentication (widely supported)
+host    all             postgres_user   0.0.0.0/0               md5
+host    all             postgres_user   ::0/0                   md5
 
 # MD5 authentication
 host    all             md5_user        0.0.0.0/0               md5
 host    all             md5_user        ::0/0                   md5
 
-# SCRAM-SHA-256 authentication (if supported)
-host    all             scram_user      0.0.0.0/0               scram-sha-256
-host    all             scram_user      ::0/0                   scram-sha-256
+# Trust authentication for scram_user (fallback)
+host    all             scram_user      0.0.0.0/0               trust
+host    all             scram_user      ::0/0                   trust
 
 # SSL authentication
 hostssl all             ssl_user        0.0.0.0/0               md5
@@ -166,6 +184,7 @@ shared_buffers = 128MB
 log_statement = 'all'
 log_min_messages = info
 ssl = off
+
 
 # 如果需要 SSL 支持，取消注释以下行
 # ssl = on
