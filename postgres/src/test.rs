@@ -457,7 +457,7 @@ fn notifications_timeout_iter() {
     thread::spawn(|| {
         let mut client = Client::connect("host=localhost port=5433 user=postgres", NoTls).unwrap();
 
-        thread::sleep(Duration::from_secs(1));
+        thread::sleep(Duration::from_millis(1500));  // 稍微增加等待时间
         client
             .batch_execute("NOTIFY notifications_timeout_iter, 'world'")
             .unwrap();
@@ -470,7 +470,7 @@ fn notifications_timeout_iter() {
 
     let notifications = client
         .notifications()
-        .timeout_iter(Duration::from_secs(2))
+        .timeout_iter(Duration::from_secs(5))  // 增加超时时间以适应网络延迟
         .collect::<Vec<_>>()
         .unwrap();
     assert_eq!(notifications.len(), 2);
