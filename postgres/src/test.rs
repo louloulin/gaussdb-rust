@@ -45,20 +45,23 @@ fn query_unprepared() {
 fn transaction_commit() {
     let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
 
-    // OpenGauss doesn't support SERIAL on temporary tables, use regular table
+    // OpenGauss doesn't support SERIAL on temporary tables, use regular table with unique name
     client
-        .simple_query("CREATE TABLE IF NOT EXISTS foo (id INT PRIMARY KEY)")
+        .simple_query("DROP TABLE IF EXISTS foo_commit")
+        .unwrap();
+    client
+        .simple_query("CREATE TABLE foo_commit (id INT PRIMARY KEY)")
         .unwrap();
 
     let mut transaction = client.transaction().unwrap();
 
     transaction
-        .execute("INSERT INTO foo DEFAULT VALUES", &[])
+        .execute("INSERT INTO foo_commit (id) VALUES (1)", &[])
         .unwrap();
 
     transaction.commit().unwrap();
 
-    let rows = client.query("SELECT * FROM foo", &[]).unwrap();
+    let rows = client.query("SELECT * FROM foo_commit", &[]).unwrap();
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].get::<_, i32>(0), 1);
 }
