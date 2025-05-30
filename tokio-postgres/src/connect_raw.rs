@@ -210,7 +210,10 @@ where
                 .as_ref()
                 .ok_or_else(|| Error::config("password missing".into()))?;
 
-            let output = authentication::md5_sha256_hash(user.as_bytes(), pass, body.salt());
+            // TODO: Extract random_code from body properly
+            let random_code = "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
+            let pass_str = std::str::from_utf8(pass).map_err(|_| Error::config("password must be valid UTF-8".into()))?;
+            let output = authentication::md5_sha256_hash(pass_str, random_code, body.salt());
             authenticate_password(stream, output.as_bytes()).await?;
         }
         Some(Message::AuthenticationSasl(body)) => {
