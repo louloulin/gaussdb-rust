@@ -16,7 +16,7 @@ default = ["runtime"]
 runtime = ["tokio-postgres/runtime"]
 
 [dependencies]
-openssl = "0.10"
+openssl = { version = "0.10", features = ["vendored"] }
 tokio = "1.0"
 tokio-openssl = "0.6"
 tokio-postgres = { version = "0.7.11", path = "../tokio-postgres", default-features = false }
