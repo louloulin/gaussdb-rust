@@ -99,7 +99,7 @@ async fn runtime() {
     let connector = MakeTlsConnector::new(connector);
 
     let (client, connection) = tokio_postgres::connect(
-        "host=localhost port=5433 user=postgres sslmode=require",
+        "host=localhost port=5433 user=ssl_user password=password sslmode=require",
         connector,
     )
     .await

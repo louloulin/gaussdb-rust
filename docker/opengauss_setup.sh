@@ -37,6 +37,10 @@ BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'gaussdb') THEN
         CREATE USER gaussdb WITH PASSWORD 'Gaussdb@123';
     END IF;
+
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'pass_user') THEN
+        CREATE USER pass_user WITH PASSWORD 'password';
+    END IF;
 END
 $$;
 
@@ -48,6 +52,8 @@ GRANT ALL PRIVILEGES ON DATABASE postgres TO postgres_user;
 GRANT ALL PRIVILEGES ON DATABASE postgres TO md5_user;
 GRANT ALL PRIVILEGES ON DATABASE postgres TO scram_user;
 GRANT ALL PRIVILEGES ON DATABASE postgres TO ssl_user;
+GRANT ALL PRIVILEGES ON DATABASE postgres TO pass_user;
+GRANT ALL PRIVILEGES ON DATABASE postgres TO gaussdb;
 GRANT ALL PRIVILEGES ON DATABASE test_db TO postgres_user;
 
 -- 创建测试表和数据
@@ -126,6 +132,14 @@ hostssl all             ssl_user        ::0/0                   md5
 local   all             all                                     trust
 host    all             all             127.0.0.1/32            trust
 host    all             all             ::1/128                 trust
+
+# Allow gaussdb user for testing
+host    all             gaussdb         0.0.0.0/0               md5
+host    all             gaussdb         ::0/0                   md5
+
+# Allow pass_user for testing
+host    all             pass_user       0.0.0.0/0               md5
+host    all             pass_user       ::0/0                   md5
 
 EOCONF
 

@@ -8,7 +8,7 @@ fn defaults() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
     struct SessionId(Vec<u8>);
 
-    let mut conn = Client::connect("user=postgres host=localhost port=5433", NoTls).unwrap();
+    let mut conn = Client::connect("user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres", NoTls).unwrap();
     conn.execute(
         "CREATE DOMAIN pg_temp.\"SessionId\" AS bytea CHECK(octet_length(VALUE) = 16);",
         &[],

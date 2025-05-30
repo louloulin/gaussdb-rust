@@ -28,7 +28,7 @@ async fn unix_socket() {
 
 #[tokio::test]
 async fn tcp() {
-    smoke_test("host=localhost port=5433 user=postgres").await;
+    smoke_test("host=localhost port=5433 user=gaussdb password=Gaussdb@123").await;
 }
 
 #[tokio::test]
@@ -51,13 +51,13 @@ async fn wrong_port_count() {
 
 #[tokio::test]
 async fn target_session_attrs_ok() {
-    smoke_test("host=localhost port=5433 user=postgres target_session_attrs=read-write").await;
+    smoke_test("host=localhost port=5433 user=gaussdb password=Gaussdb@123 target_session_attrs=read-write").await;
 }
 
 #[tokio::test]
 async fn target_session_attrs_err() {
     tokio_postgres::connect(
-        "host=localhost port=5433 user=postgres target_session_attrs=read-write
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 target_session_attrs=read-write
          options='-c default_transaction_read_only=on'",
         NoTls,
     )
@@ -120,7 +120,7 @@ async fn hostaddr_host_both_missing() {
 
 #[tokio::test]
 async fn cancel_query() {
-    let client = connect("host=localhost port=5433 user=postgres").await;
+    let client = connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123").await;
 
     let cancel_token = client.cancel_token();
     let cancel = cancel_token.cancel_query(NoTls);
