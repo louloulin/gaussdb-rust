@@ -259,3 +259,7 @@ fn slice_iter<'a>(
 ) -> impl ExactSizeIterator<Item = &'a dyn ToSql> + 'a {
     s.iter().map(|s| *s as _)
 }
+
+// GaussDB/OpenGauss authentication tests
+#[cfg(test)]
+mod gaussdb_auth_test;

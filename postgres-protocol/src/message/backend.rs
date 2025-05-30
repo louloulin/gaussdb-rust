@@ -78,6 +78,8 @@ pub enum Message {
     AuthenticationGss,
     AuthenticationKerberosV5,
     AuthenticationMd5Password(AuthenticationMd5PasswordBody),
+    AuthenticationSha256Password(AuthenticationSha256PasswordBody),
+    AuthenticationMd5Sha256Password(AuthenticationMd5Sha256PasswordBody),
     AuthenticationOk,
     AuthenticationScmCredential,
     AuthenticationSspi,
@@ -214,6 +216,16 @@ impl Message {
                     Message::AuthenticationMd5Password(AuthenticationMd5PasswordBody { salt })
                 }
                 6 => Message::AuthenticationScmCredential,
+                // GaussDB/OpenGauss specific authentication methods
+                // Note: These tag values need to be verified with actual GaussDB protocol
+                13 => {
+                    let storage = buf.read_all();
+                    Message::AuthenticationSha256Password(AuthenticationSha256PasswordBody(storage))
+                }
+                14 => {
+                    let storage = buf.read_all();
+                    Message::AuthenticationMd5Sha256Password(AuthenticationMd5Sha256PasswordBody(storage))
+                }
                 7 => Message::AuthenticationGss,
                 8 => {
                     let storage = buf.read_all();
@@ -341,6 +353,24 @@ impl AuthenticationMd5PasswordBody {
     #[inline]
     pub fn salt(&self) -> [u8; 4] {
         self.salt
+    }
+}
+
+pub struct AuthenticationSha256PasswordBody(Bytes);
+
+impl AuthenticationSha256PasswordBody {
+    #[inline]
+    pub fn salt(&self) -> &[u8] {
+        &self.0
+    }
+}
+
+pub struct AuthenticationMd5Sha256PasswordBody(Bytes);
+
+impl AuthenticationMd5Sha256PasswordBody {
+    #[inline]
+    pub fn salt(&self) -> &[u8] {
+        &self.0
     }
 }
 
