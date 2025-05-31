@@ -183,7 +183,7 @@
 //! ```
 #![warn(clippy::all, rust_2018_idioms, missing_docs)]
 use fallible_iterator::FallibleIterator;
-use postgres_protocol::types::{self, ArrayDimension};
+use gaussdb_protocol::types::{self, ArrayDimension};
 use std::any::type_name;
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -195,14 +195,14 @@ use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 #[cfg(feature = "derive")]
-pub use postgres_derive::{FromSql, ToSql};
+pub use gaussdb_derive::{FromSql, ToSql};
 
 #[cfg(feature = "with-serde_json-1")]
 pub use crate::serde_json_1::Json;
 use crate::type_gen::{Inner, Other};
 
 #[doc(inline)]
-pub use postgres_protocol::Oid;
+pub use gaussdb_protocol::Oid;
 
 #[doc(inline)]
 pub use pg_lsn::PgLsn;
@@ -994,8 +994,8 @@ impl<T: ToSql> ToSql for &[T] {
             member_type.oid(),
             self.iter(),
             |e, w| match e.to_sql(member_type, w)? {
-                IsNull::No => Ok(postgres_protocol::IsNull::No),
-                IsNull::Yes => Ok(postgres_protocol::IsNull::Yes),
+                IsNull::No => Ok(gaussdb_protocol::IsNull::No),
+                IsNull::Yes => Ok(gaussdb_protocol::IsNull::Yes),
             },
             w,
         )?;

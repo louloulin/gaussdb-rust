@@ -1,6 +1,6 @@
 //! Types.
 //!
-//! This module is a reexport of the `postgres_types` crate.
+//! This module is a reexport of the `gaussdb_types` crate.
 
 #[doc(inline)]
-pub use postgres_types::*;
+pub use gaussdb_types::*;

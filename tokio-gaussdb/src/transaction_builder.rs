@@ -1,4 +1,4 @@
-use postgres_protocol::message::frontend;
+use gaussdb_protocol::message::frontend;
 
 use crate::{codec::FrontendMessage, connection::RequestMessages, Client, Error, Transaction};
 

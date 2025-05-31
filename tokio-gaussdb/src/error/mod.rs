@@ -1,7 +1,7 @@
 //! Errors.
 
 use fallible_iterator::FallibleIterator;
-use postgres_protocol::message::backend::{ErrorFields, ErrorResponseBody};
+use gaussdb_protocol::message::backend::{ErrorFields, ErrorResponseBody};
 use std::error::{self, Error as _Error};
 use std::fmt;
 use std::io;

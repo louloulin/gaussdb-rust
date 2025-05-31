@@ -9,9 +9,9 @@ use fallible_iterator::FallibleIterator;
 use futures_util::{ready, Stream};
 use log::{debug, log_enabled, Level};
 use pin_project_lite::pin_project;
-use postgres_protocol::message::backend::{CommandCompleteBody, Message};
-use postgres_protocol::message::frontend;
-use postgres_types::Type;
+use gaussdb_protocol::message::backend::{CommandCompleteBody, Message};
+use gaussdb_protocol::message::frontend;
+use gaussdb_types::Type;
 use std::fmt;
 use std::marker::PhantomPinned;
 use std::pin::Pin;
@@ -266,8 +266,8 @@ where
         param_formats,
         params.into_iter().enumerate(),
         |(idx, (param, ty)), buf| match param.borrow_to_sql().to_sql_checked(&ty, buf) {
-            Ok(IsNull::No) => Ok(postgres_protocol::IsNull::No),
-            Ok(IsNull::Yes) => Ok(postgres_protocol::IsNull::Yes),
+            Ok(IsNull::No) => Ok(gaussdb_protocol::IsNull::No),
+            Ok(IsNull::Yes) => Ok(gaussdb_protocol::IsNull::Yes),
             Err(e) => {
                 error_idx = idx;
                 Err(e)

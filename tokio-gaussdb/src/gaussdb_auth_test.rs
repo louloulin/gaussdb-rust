@@ -6,7 +6,7 @@
 
 #[cfg(test)]
 mod tests {
-    use postgres_protocol::authentication::{sha256_hash, md5_sha256_hash};
+    use gaussdb_protocol::authentication::{sha256_hash, md5_sha256_hash};
 
     const TEST_RANDOM_CODE: &str = "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
 

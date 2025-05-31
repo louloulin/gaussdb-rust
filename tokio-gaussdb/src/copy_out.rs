@@ -6,7 +6,7 @@ use bytes::Bytes;
 use futures_util::{ready, Stream};
 use log::debug;
 use pin_project_lite::pin_project;
-use postgres_protocol::message::backend::Message;
+use gaussdb_protocol::message::backend::Message;
 use std::marker::PhantomPinned;
 use std::pin::Pin;
 use std::task::{Context, Poll};

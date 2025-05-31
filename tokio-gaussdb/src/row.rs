@@ -6,7 +6,7 @@ use crate::statement::Column;
 use crate::types::{FromSql, Type, WrongType};
 use crate::{Error, Statement};
 use fallible_iterator::FallibleIterator;
-use postgres_protocol::message::backend::DataRowBody;
+use gaussdb_protocol::message::backend::DataRowBody;
 use std::fmt;
 use std::ops::Range;
 use std::str;

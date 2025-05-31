@@ -21,8 +21,8 @@ use fallible_iterator::FallibleIterator;
 use futures_channel::mpsc;
 use futures_util::{future, pin_mut, ready, StreamExt, TryStreamExt};
 use parking_lot::Mutex;
-use postgres_protocol::message::backend::Message;
-use postgres_types::BorrowToSql;
+use gaussdb_protocol::message::backend::Message;
+use gaussdb_types::BorrowToSql;
 use std::collections::HashMap;
 use std::fmt;
 #[cfg(feature = "runtime")]

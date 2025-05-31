@@ -2,7 +2,7 @@ use crate::config::{SslMode, SslNegotiation};
 use crate::tls::TlsConnect;
 use crate::{connect_tls, Error};
 use bytes::BytesMut;
-use postgres_protocol::message::frontend;
+use gaussdb_protocol::message::frontend;
 use tokio::io::{AsyncRead, AsyncWrite, AsyncWriteExt};
 
 pub async fn cancel_query_raw<S, T>(
