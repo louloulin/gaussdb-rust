@@ -85,8 +85,8 @@ async fn test_name_params() {
         &[
             (Some("hello world".to_owned()), "'hello world'"),
             (
-                Some("イロハニホヘ�?チリヌル�?.to_owned()),
-                "'イロハニホヘ�?チリヌル�?",
+                Some("イロハニホヘトチリヌルヲ".to_owned()),
+                "'イロハニホヘトチリヌルヲ'",
             ),
             (None, "NULL"),
         ],
@@ -193,8 +193,8 @@ async fn test_varchar_params() {
         &[
             (Some("hello world".to_owned()), "'hello world'"),
             (
-                Some("イロハニホヘ�?チリヌル�?.to_owned()),
-                "'イロハニホヘ�?チリヌル�?",
+                Some("イロハニホヘトチリヌルヲ".to_owned()),
+                "'イロハニホヘトチリヌルヲ'",
             ),
             (None, "NULL"),
         ],
@@ -209,8 +209,8 @@ async fn test_text_params() {
         &[
             (Some("hello world".to_owned()), "'hello world'"),
             (
-                Some("イロハニホヘ�?チリヌル�?.to_owned()),
-                "'イロハニホヘ�?チリヌル�?",
+                Some("イロハニホヘトチリヌルヲ".to_owned()),
+                "'イロハニホヘトチリヌルヲ'",
             ),
             (None, "NULL"),
         ],
