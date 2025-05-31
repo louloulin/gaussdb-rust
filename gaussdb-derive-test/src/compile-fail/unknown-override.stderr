@@ -1,11 +1,11 @@
 error: unknown override
- --> $DIR/unknown-override.rs:4:12
+ --> src/compile-fail/unknown-override.rs:4:11
   |
-4 | #[postgres(foo = "bar")]
-  |            ^^^
+4 | #[gaussdb(foo = "bar")]
+  |           ^^^
 
 error: unknown override
-  --> $DIR/unknown-override.rs:10:12
+  --> src/compile-fail/unknown-override.rs:10:11
    |
-10 | #[postgres(foo = "bar")]
-   |            ^^^
+10 | #[gaussdb(foo = "bar")]
+   |           ^^^
