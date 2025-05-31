@@ -9,6 +9,7 @@ members = [
     "gaussdb-protocol",
     "gaussdb-types",
     "tokio-gaussdb",
+    "examples",
 ]
 resolver = "2"
 

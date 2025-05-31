@@ -74,10 +74,10 @@ fn main() -> Result<(), Error> {
         let name: &str = row.get(1);
         let email: &str = row.get(2);
         let age: i32 = row.get(3);
-        let created_at: chrono::NaiveDateTime = row.get(4);
-        
-        println!("   │ {:3} │ {:15} │ {:19} │ {:3} │ {:19} │", 
-                 id, name, email, age, created_at.format("%Y-%m-%d %H:%M:%S"));
+        let created_at: String = row.get::<_, String>(4);
+
+        println!("   │ {:3} │ {:15} │ {:19} │ {:3} │ {:19} │",
+                 id, name, email, age, &created_at[..19]);
     }
     println!("   └─────┴─────────────────┴─────────────────────┴─────┴─────────────────────┘");
 

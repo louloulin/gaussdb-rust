@@ -103,11 +103,11 @@ async fn main() -> Result<(), Error> {
         let category: &str = row.get(2);
         let price: rust_decimal::Decimal = row.get(3);
         let in_stock: bool = row.get(4);
-        let created_at: chrono::NaiveDateTime = row.get(5);
+        let created_at: String = row.get::<_, String>(5);
         
-        println!("   │ {:3} │ {:15} │ {:11} │ ${:6.2} │ {:7} │ {:19} │", 
-                 id, name, category, price, if in_stock { "Yes" } else { "No" }, 
-                 created_at.format("%Y-%m-%d %H:%M:%S"));
+        println!("   │ {:3} │ {:15} │ {:11} │ ${:6.2} │ {:7} │ {:19} │",
+                 id, name, category, price, if in_stock { "Yes" } else { "No" },
+                 &created_at[..19]);
     }
     println!("   └─────┴─────────────────┴─────────────┴─────────┴─────────┴─────────────────────┘");
 
