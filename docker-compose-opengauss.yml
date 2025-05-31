@@ -13,9 +13,9 @@ services:
       - GS_NODENAME=opengauss
       - GS_USERNAME=gaussdb   # 自定义用户名
 
-    volumes:
-      - opengauss_data:/var/lib/opengauss/data
-      - ./docker/opengauss_setup.sh:/docker-entrypoint-initdb.d/opengauss_setup.sh
+    #volumes:
+      #- opengauss_data:/var/lib/opengauss/data
+      #- ./docker/opengauss_setup.sh:/docker-entrypoint-initdb.d/opengauss_setup.sh
     networks:
       - gaussdb_network
     healthcheck:
@@ -24,13 +24,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
-
-
-volumes:
-  opengauss_data:
-    driver: local
-  # gaussdb_data:
-  #   driver: local
 
 networks:
   gaussdb_network:
