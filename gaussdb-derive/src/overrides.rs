@@ -24,10 +24,19 @@ impl Overrides {
                 continue;
             }
 
-            let attr_name = if attr.path().is_ident("postgres") { "postgres" } else { "gaussdb" };
+            let attr_name = if attr.path().is_ident("postgres") {
+                "postgres"
+            } else {
+                "gaussdb"
+            };
             let list = match &attr.meta {
                 Meta::List(ref list) => list,
-                bad => return Err(Error::new_spanned(bad, format!("expected a #[{}(...)]", attr_name))),
+                bad => {
+                    return Err(Error::new_spanned(
+                        bad,
+                        format!("expected a #[{}(...)]", attr_name),
+                    ))
+                }
             };
 
             let nested = list.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)?;

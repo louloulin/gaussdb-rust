@@ -1,4 +1,4 @@
-//! An asynchronous, pipelined, PostgreSQL client.
+//! An asynchronous, pipelined, GaussDB client.
 //!
 //! # Example
 //!

@@ -1,9 +1,9 @@
-//! Low level Postgres protocol APIs.
+//! Low level GaussDB protocol APIs.
 //!
-//! This crate implements the low level components of Postgres's communication
+//! This crate implements the low level components of GaussDB's communication
 //! protocol, including message and value serialization and deserialization.
 //! It is designed to be used as a building block by higher level APIs such as
-//! `rust-postgres`, and should not typically be used directly.
+//! `gaussdb-rust`, and should not typically be used directly.
 //!
 //! # Note
 //!
@@ -21,10 +21,10 @@ pub mod message;
 pub mod password;
 pub mod types;
 
-/// A Postgres OID.
+/// A GaussDB OID.
 pub type Oid = u32;
 
-/// A Postgres Log Sequence Number (LSN).
+/// A GaussDB Log Sequence Number (LSN).
 pub type Lsn = u64;
 
 /// An enum indicating if a value is `NULL` or not.

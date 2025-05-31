@@ -5,7 +5,7 @@
 //! ```no_run
 //! use openssl::ssl::{SslConnector, SslMethod};
 //! # #[cfg(feature = "runtime")]
-//! use postgres_openssl::MakeTlsConnector;
+//! use gaussdb_openssl::MakeTlsConnector;
 //!
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //! # #[cfg(feature = "runtime")] {
@@ -27,7 +27,7 @@
 //! ```no_run
 //! use openssl::ssl::{SslConnector, SslMethod};
 //! # #[cfg(feature = "runtime")]
-//! use postgres_openssl::MakeTlsConnector;
+//! use gaussdb_openssl::MakeTlsConnector;
 //!
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //! # #[cfg(feature = "runtime")] {
@@ -64,11 +64,11 @@ use std::pin::Pin;
 use std::sync::Arc;
 use std::task::{Context, Poll};
 use tokio::io::{AsyncRead, AsyncWrite, BufReader, ReadBuf};
-use tokio_openssl::SslStream;
 use tokio_gaussdb::tls;
 #[cfg(feature = "runtime")]
 use tokio_gaussdb::tls::MakeTlsConnect;
 use tokio_gaussdb::tls::{ChannelBinding, TlsConnect};
+use tokio_openssl::SslStream;
 
 #[cfg(test)]
 mod test;

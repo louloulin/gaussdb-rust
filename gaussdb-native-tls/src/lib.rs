@@ -5,7 +5,7 @@
 //! ```no_run
 //! use native_tls::{Certificate, TlsConnector};
 //! # #[cfg(feature = "runtime")]
-//! use postgres_native_tls::MakeTlsConnector;
+//! use gaussdb_native_tls::MakeTlsConnector;
 //! use std::fs;
 //!
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -31,7 +31,7 @@
 //! ```no_run
 //! use native_tls::{Certificate, TlsConnector};
 //! # #[cfg(feature = "runtime")]
-//! use postgres_native_tls::MakeTlsConnector;
+//! use gaussdb_native_tls::MakeTlsConnector;
 //! use std::fs;
 //!
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {

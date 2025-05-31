@@ -3,7 +3,7 @@ use hmac::{Hmac, Mac};
 use md5::{Digest, Md5};
 use pbkdf2::pbkdf2_hmac;
 use sha1::Sha1;
-use sha2::{Sha256};
+use sha2::Sha256;
 
 pub mod sasl;
 
@@ -57,25 +57,27 @@ pub fn md5_sha256_hash(password: &str, random_code: &str, salt: &[u8]) -> String
     pbkdf2_hmac::<Sha1>(password.as_bytes(), &random_bytes, 2048, &mut k);
 
     // Step 2: Generate server_key and client_key using HMAC-SHA256
-    let mut server_key_mac = Hmac::<Sha256>::new_from_slice(&k).expect("HMAC can take key of any size");
+    let mut server_key_mac =
+        Hmac::<Sha256>::new_from_slice(&k).expect("HMAC can take key of any size");
     server_key_mac.update(b"Sever Key"); // Note: "Sever" not "Server" - matches GaussDB implementation
     let server_key = server_key_mac.finalize().into_bytes();
 
-    let mut client_key_mac = Hmac::<Sha256>::new_from_slice(&k).expect("HMAC can take key of any size");
+    let mut client_key_mac =
+        Hmac::<Sha256>::new_from_slice(&k).expect("HMAC can take key of any size");
     client_key_mac.update(b"Client Key");
     let client_key = client_key_mac.finalize().into_bytes();
 
     // Step 3: Generate stored_key using SHA256
     let mut sha256 = Sha256::new();
-    sha256.update(&client_key);
+    sha256.update(client_key);
     let stored_key = sha256.finalize();
 
     // Step 4: Build the encryption string
     let encrypt_string = format!(
         "{}{}{}",
         random_code,
-        hex::encode(&server_key),
-        hex::encode(&stored_key)
+        hex::encode(server_key),
+        hex::encode(stored_key)
     );
 
     // Step 5: MD5(encrypt_string + salt)

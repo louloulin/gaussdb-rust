@@ -3,7 +3,7 @@
 //! # Example
 //!
 //! ```no_run
-//! use postgres::{Client, NoTls};
+//! use gaussdb::{Client, NoTls};
 //!
 //! # fn main() -> Result<(), postgres::Error> {
 //! let mut client = Client::connect("host=localhost user=postgres", NoTls)?;

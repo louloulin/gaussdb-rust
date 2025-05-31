@@ -6,9 +6,10 @@
 
 #[cfg(test)]
 mod tests {
-    use gaussdb_protocol::authentication::{sha256_hash, md5_sha256_hash};
+    use gaussdb_protocol::authentication::{md5_sha256_hash, sha256_hash};
 
-    const TEST_RANDOM_CODE: &str = "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
+    const TEST_RANDOM_CODE: &str =
+        "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
 
     #[test]
     fn test_sha256_authentication() {
@@ -60,5 +61,4 @@ mod tests {
         assert!(md5_sha256_result.starts_with("md5"));
         assert_ne!(sha256_result, md5_sha256_result);
     }
-
 }

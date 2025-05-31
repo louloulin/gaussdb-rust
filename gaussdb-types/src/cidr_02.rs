@@ -1,6 +1,6 @@
 use bytes::BytesMut;
 use cidr_02::{IpCidr, IpInet};
-use postgres_protocol::types;
+use gaussdb_protocol::types;
 use std::error::Error;
 
 use crate::{FromSql, IsNull, ToSql, Type};

@@ -3,7 +3,7 @@ use jiff_01::{
     civil::{Date, DateTime, Time},
     Span, SpanRound, Timestamp, Unit,
 };
-use postgres_protocol::types;
+use gaussdb_protocol::types;
 use std::error::Error;
 
 use crate::{FromSql, IsNull, ToSql, Type};

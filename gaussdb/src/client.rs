@@ -60,7 +60,7 @@ impl Client {
     /// # Example
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     ///
     /// # fn main() -> Result<(), postgres::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -95,7 +95,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     ///
     /// # fn main() -> Result<(), postgres::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -129,7 +129,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     ///
     /// # fn main() -> Result<(), postgres::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -163,7 +163,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     ///
     /// # fn main() -> Result<(), postgres::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -200,7 +200,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     /// use fallible_iterator::FallibleIterator;
     /// use std::iter;
     ///
@@ -222,8 +222,8 @@ impl Client {
     /// this the type must explicitly be converted to `&dyn ToSql`.
     ///
     /// ```no_run
-    /// # use postgres::{Client, NoTls};
-    /// use postgres::types::ToSql;
+    /// # use gaussdb::{Client, NoTls};
+    /// use gaussdb::types::ToSql;
     /// use fallible_iterator::FallibleIterator;
     /// # fn main() -> Result<(), postgres::Error> {
     /// # let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -289,8 +289,8 @@ impl Client {
     ///
     /// # Examples
     /// ```no_run
-    /// # use postgres::{Client, NoTls};
-    /// use postgres::types::{ToSql, Type};
+    /// # use gaussdb::{Client, NoTls};
+    /// use gaussdb::types::{ToSql, Type};
     /// use fallible_iterator::FallibleIterator;
     /// # fn main() -> Result<(), postgres::Error> {
     /// # let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -330,7 +330,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     ///
     /// # fn main() -> Result<(), postgres::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -357,8 +357,8 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
-    /// use postgres::types::Type;
+    /// use gaussdb::{Client, NoTls};
+    /// use gaussdb::types::Type;
     ///
     /// # fn main() -> Result<(), postgres::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -392,7 +392,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     /// use std::io::Write;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -420,7 +420,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     /// use std::io::Read;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -494,7 +494,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
+    /// use gaussdb::{Client, NoTls};
     ///
     /// # fn main() -> Result<(), postgres::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -520,7 +520,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, IsolationLevel, NoTls};
+    /// use gaussdb::{Client, IsolationLevel, NoTls};
     ///
     /// # fn main() -> Result<(), postgres::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
@@ -552,8 +552,8 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// use postgres::{Client, NoTls};
-    /// use postgres::error::SqlState;
+    /// use gaussdb::{Client, NoTls};
+    /// use gaussdb::error::SqlState;
     /// use std::thread;
     /// use std::time::Duration;
     ///

@@ -13,7 +13,11 @@ use fallible_iterator::FallibleIterator;
 
 #[test]
 fn prepare() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     let stmt = client.prepare("SELECT 1::INT, $1::TEXT").unwrap();
     assert_eq!(stmt.params(), &[Type::TEXT]);
@@ -24,7 +28,11 @@ fn prepare() {
 
 #[test]
 fn query_prepared() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb dbname=postgres password=Gaussdb@123", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb dbname=postgres password=Gaussdb@123",
+        NoTls,
+    )
+    .unwrap();
 
     let stmt = client.prepare("SELECT $1::TEXT").unwrap();
     let rows = client.query(&stmt, &[&"hello"]).unwrap();
@@ -34,7 +42,11 @@ fn query_prepared() {
 
 #[test]
 fn query_unprepared() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb dbname=postgres password=Gaussdb@123", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb dbname=postgres password=Gaussdb@123",
+        NoTls,
+    )
+    .unwrap();
 
     let rows = client.query("SELECT $1::TEXT", &[&"hello"]).unwrap();
     assert_eq!(rows.len(), 1);
@@ -43,7 +55,11 @@ fn query_unprepared() {
 
 #[test]
 fn transaction_commit() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     // OpenGauss doesn't support SERIAL on temporary tables, use regular table with unique name
     client
@@ -68,7 +84,11 @@ fn transaction_commit() {
 
 #[test]
 fn transaction_rollback() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     // OpenGauss doesn't support SERIAL on temporary tables, use regular table
     client
@@ -89,7 +109,11 @@ fn transaction_rollback() {
 
 #[test]
 fn transaction_drop() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     // OpenGauss doesn't support SERIAL on temporary tables, use regular table
     client
@@ -110,8 +134,16 @@ fn transaction_drop() {
 
 #[test]
 fn transaction_drop_immediate_rollback() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
-    let mut client2 = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
+    let mut client2 = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     // OpenGauss doesn't support SERIAL or ON CONFLICT, use regular table and INSERT IF NOT EXISTS pattern
     client
@@ -131,13 +163,19 @@ fn transaction_drop_immediate_rollback() {
 
     drop(transaction);
 
-    let rows = client2.query("SELECT * FROM foo_immediate FOR UPDATE", &[]).unwrap();
+    let rows = client2
+        .query("SELECT * FROM foo_immediate FOR UPDATE", &[])
+        .unwrap();
     assert_eq!(rows.len(), 1);
 }
 
 #[test]
 fn nested_transactions() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .batch_execute("CREATE TEMPORARY TABLE foo (id INT PRIMARY KEY)")
@@ -188,7 +226,11 @@ fn nested_transactions() {
 
 #[test]
 fn savepoints() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .batch_execute("CREATE TEMPORARY TABLE foo (id INT PRIMARY KEY)")
@@ -239,7 +281,11 @@ fn savepoints() {
 
 #[test]
 fn copy_in() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .simple_query("CREATE TEMPORARY TABLE foo (id INT, name TEXT)")
@@ -262,7 +308,11 @@ fn copy_in() {
 
 #[test]
 fn copy_in_abort() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .simple_query("CREATE TEMPORARY TABLE foo (id INT, name TEXT)")
@@ -281,7 +331,11 @@ fn copy_in_abort() {
 
 #[test]
 fn binary_copy_in() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .simple_query("CREATE TEMPORARY TABLE foo (id INT, name TEXT)")
@@ -306,7 +360,11 @@ fn binary_copy_in() {
 
 #[test]
 fn copy_out() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .simple_query(
@@ -328,7 +386,11 @@ fn copy_out() {
 #[test]
 #[ignore] // OpenGauss binary copy format may differ from PostgreSQL
 fn binary_copy_out() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .simple_query(
@@ -354,7 +416,11 @@ fn binary_copy_out() {
 
 #[test]
 fn portal() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .simple_query(
@@ -381,7 +447,11 @@ fn portal() {
 
 #[test]
 fn cancel_query() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     let cancel_token = client.cancel_token();
     let cancel_thread = thread::spawn(move || {
@@ -400,7 +470,11 @@ fn cancel_query() {
 #[test]
 #[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
 fn notifications_iter() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .batch_execute(
@@ -421,7 +495,11 @@ fn notifications_iter() {
 #[test]
 #[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
 fn notifications_blocking_iter() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .batch_execute(
@@ -433,7 +511,11 @@ fn notifications_blocking_iter() {
         .unwrap();
 
     thread::spawn(|| {
-        let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+        let mut client = Client::connect(
+            "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+            NoTls,
+        )
+        .unwrap();
 
         thread::sleep(Duration::from_secs(1));
         client
@@ -455,7 +537,11 @@ fn notifications_blocking_iter() {
 #[test]
 #[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
 fn notifications_timeout_iter() {
-    let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let mut client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
 
     client
         .batch_execute(
@@ -467,9 +553,13 @@ fn notifications_timeout_iter() {
         .unwrap();
 
     thread::spawn(|| {
-        let mut client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+        let mut client = Client::connect(
+            "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+            NoTls,
+        )
+        .unwrap();
 
-        thread::sleep(Duration::from_millis(1500));  // 稍微增加等待时间
+        thread::sleep(Duration::from_millis(1500)); // 稍微增加等待时间
         client
             .batch_execute("NOTIFY notifications_timeout_iter, 'world'")
             .unwrap();
@@ -482,7 +572,7 @@ fn notifications_timeout_iter() {
 
     let notifications = client
         .notifications()
-        .timeout_iter(Duration::from_secs(5))  // 增加超时时间以适应网络延迟
+        .timeout_iter(Duration::from_secs(5)) // 增加超时时间以适应网络延迟
         .collect::<Vec<_>>()
         .unwrap();
     assert_eq!(notifications.len(), 2);
@@ -493,11 +583,13 @@ fn notifications_timeout_iter() {
 #[test]
 fn notice_callback() {
     let (notice_tx, notice_rx) = mpsc::sync_channel(64);
-    let mut client = Config::from_str("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres")
-        .unwrap()
-        .notice_callback(move |n| notice_tx.send(n).unwrap())
-        .connect(NoTls)
-        .unwrap();
+    let mut client = Config::from_str(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+    )
+    .unwrap()
+    .notice_callback(move |n| notice_tx.send(n).unwrap())
+    .connect(NoTls)
+    .unwrap();
 
     client
         .batch_execute("DO $$BEGIN RAISE NOTICE 'custom'; END$$")
@@ -508,7 +600,11 @@ fn notice_callback() {
 
 #[test]
 fn explicit_close() {
-    let client = Client::connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls).unwrap();
+    let client = Client::connect(
+        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .unwrap();
     client.close().unwrap();
 }
 

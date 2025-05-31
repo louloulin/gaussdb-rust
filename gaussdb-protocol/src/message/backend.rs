@@ -71,7 +71,7 @@ impl Header {
     }
 }
 
-/// An enum representing Postgres backend messages.
+/// An enum representing GaussDB backend messages.
 #[non_exhaustive]
 pub enum Message {
     AuthenticationCleartextPassword,
@@ -224,7 +224,9 @@ impl Message {
                 }
                 14 => {
                     let storage = buf.read_all();
-                    Message::AuthenticationMd5Sha256Password(AuthenticationMd5Sha256PasswordBody(storage))
+                    Message::AuthenticationMd5Sha256Password(AuthenticationMd5Sha256PasswordBody(
+                        storage,
+                    ))
                 }
                 7 => Message::AuthenticationGss,
                 8 => {

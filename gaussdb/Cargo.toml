@@ -18,7 +18,7 @@ harness = false
 all-features = true
 
 [badges]
-circle-ci = { repository = "sfackler/rust-postgres" }
+circle-ci = { repository = "HuaweiCloudDeveloper/gaussdb-rust" }
 
 [features]
 array-impls = ["tokio-gaussdb/array-impls"]
