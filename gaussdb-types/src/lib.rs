@@ -27,7 +27,7 @@
 //!
 //! ```rust
 //! # #[cfg(feature = "derive")]
-//! use postgres_types::{ToSql, FromSql};
+//! use gaussdb_types::{ToSql, FromSql};
 //!
 //! # #[cfg(feature = "derive")]
 //! #[derive(Debug, ToSql, FromSql)]
@@ -48,7 +48,7 @@
 //!
 //! ```rust
 //! # #[cfg(feature = "derive")]
-//! use postgres_types::{ToSql, FromSql};
+//! use gaussdb_types::{ToSql, FromSql};
 //!
 //! # #[cfg(feature = "derive")]
 //! #[derive(Debug, ToSql, FromSql)]
@@ -57,16 +57,16 @@
 //!
 //! ## Newtypes
 //!
-//! The `#[postgres(transparent)]` attribute can be used on a single-field tuple struct to create a
+//! The `#[gaussdb(transparent)]` attribute can be used on a single-field tuple struct to create a
 //! Rust-only wrapper type that will use the [`ToSql`] & [`FromSql`] implementation of the inner
 //! value :
 //! ```rust
 //! # #[cfg(feature = "derive")]
-//! use postgres_types::{ToSql, FromSql};
+//! use gaussdb_types::{ToSql, FromSql};
 //!
 //! # #[cfg(feature = "derive")]
 //! #[derive(Debug, ToSql, FromSql)]
-//! #[postgres(transparent)]
+//! #[gaussdb(transparent)]
 //! struct UserId(i32);
 //! ```
 //!
@@ -84,7 +84,7 @@
 //!
 //! ```rust
 //! # #[cfg(feature = "derive")]
-//! use postgres_types::{ToSql, FromSql};
+//! use gaussdb_types::{ToSql, FromSql};
 //!
 //! # #[cfg(feature = "derive")]
 //! #[derive(Debug, ToSql, FromSql)]
@@ -98,7 +98,7 @@
 //! ## Naming
 //!
 //! The derived implementations will enforce exact matches of type, field, and variant names between the Rust and
-//! Postgres types. The `#[postgres(name = "...")]` attribute can be used to adjust the name on a type, variant, or
+//! Postgres types. The `#[gaussdb(name = "...")]` attribute can be used to adjust the name on a type, variant, or
 //! field:
 //!
 //! ```sql
@@ -111,34 +111,34 @@
 //!
 //! ```rust
 //! # #[cfg(feature = "derive")]
-//! use postgres_types::{ToSql, FromSql};
+//! use gaussdb_types::{ToSql, FromSql};
 //!
 //! # #[cfg(feature = "derive")]
 //! #[derive(Debug, ToSql, FromSql)]
-//! #[postgres(name = "mood")]
+//! #[gaussdb(name = "mood")]
 //! enum Mood {
-//!     #[postgres(name = "sad")]
+//!     #[gaussdb(name = "sad")]
 //!     Sad,
-//!     #[postgres(name = "ok")]
+//!     #[gaussdb(name = "ok")]
 //!     Ok,
-//!     #[postgres(name = "happy")]
+//!     #[gaussdb(name = "happy")]
 //!     Happy,
 //! }
 //! ```
 //!
-//! Alternatively, the `#[postgres(rename_all = "...")]` attribute can be used to rename all fields or variants
+//! Alternatively, the `#[gaussdb(rename_all = "...")]` attribute can be used to rename all fields or variants
 //! with the chosen casing convention. This will not affect the struct or enum's type name. Note that
-//! `#[postgres(name = "...")]` takes precendence when used in conjunction with `#[postgres(rename_all = "...")]`:
+//! `#[gaussdb(name = "...")]` takes precendence when used in conjunction with `#[gaussdb(rename_all = "...")]`:
 //!
 //! ```rust
 //! # #[cfg(feature = "derive")]
-//! use postgres_types::{ToSql, FromSql};
+//! use gaussdb_types::{ToSql, FromSql};
 //!
 //! # #[cfg(feature = "derive")]
 //! #[derive(Debug, ToSql, FromSql)]
-//! #[postgres(name = "mood", rename_all = "snake_case")]
+//! #[gaussdb(name = "mood", rename_all = "snake_case")]
 //! enum Mood {
-//!     #[postgres(name = "ok")]
+//!     #[gaussdb(name = "ok")]
 //!     Ok,             // ok
 //!     VeryHappy,      // very_happy
 //! }
@@ -159,7 +159,7 @@
 //!
 //! By default the generated implementation of [`ToSql`] & [`FromSql`] for enums will require an exact match of the enum
 //! variants between the Rust and Postgres types.
-//! To allow mismatches, the `#[postgres(allow_mismatch)]` attribute can be used on the enum definition:
+//! To allow mismatches, the `#[gaussdb(allow_mismatch)]` attribute can be used on the enum definition:
 //!
 //! ```sql
 //! CREATE TYPE mood AS ENUM (
@@ -171,11 +171,11 @@
 //!
 //! ```rust
 //! # #[cfg(feature = "derive")]
-//! use postgres_types::{ToSql, FromSql};
+//! use gaussdb_types::{ToSql, FromSql};
 //!
 //! # #[cfg(feature = "derive")]
 //! #[derive(Debug, ToSql, FromSql)]
-//! #[postgres(allow_mismatch)]
+//! #[gaussdb(allow_mismatch)]
 //! enum Mood {
 //!    Happy,
 //!    Meh,
