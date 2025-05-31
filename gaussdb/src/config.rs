@@ -7,7 +7,7 @@ use crate::Client;
 use log::info;
 use std::fmt;
 use std::net::IpAddr;
-use std::path::Path;
+
 use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;

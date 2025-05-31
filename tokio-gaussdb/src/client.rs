@@ -27,7 +27,7 @@ use std::collections::HashMap;
 use std::fmt;
 #[cfg(feature = "runtime")]
 use std::net::IpAddr;
-#[cfg(feature = "runtime")]
+#[cfg(all(feature = "runtime", unix))]
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::task::{Context, Poll};

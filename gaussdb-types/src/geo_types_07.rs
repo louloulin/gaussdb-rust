@@ -1,7 +1,7 @@
 use bytes::BytesMut;
 use fallible_iterator::FallibleIterator;
-use geo_types_0_7::{Coord, LineString, Point, Rect};
 use gaussdb_protocol::types;
+use geo_types_0_7::{Coord, LineString, Point, Rect};
 use std::error::Error;
 
 use crate::{FromSql, IsNull, ToSql, Type};

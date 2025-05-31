@@ -1,9 +1,9 @@
 use bytes::BytesMut;
+use gaussdb_protocol::types;
 use jiff_02::{
     civil::{Date, DateTime, Time},
     Span, SpanRound, Timestamp, Unit,
 };
-use gaussdb_protocol::types;
 use std::error::Error;
 
 use crate::{FromSql, IsNull, ToSql, Type};
