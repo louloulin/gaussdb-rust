@@ -3,7 +3,7 @@ use jiff_02::{
     Timestamp as JiffTimestamp,
 };
 use std::fmt;
-use tokio_postgres::{
+use tokio_gaussdb::{
     types::{Date, FromSqlOwned, Timestamp},
     Client,
 };

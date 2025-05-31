@@ -1,8 +1,8 @@
 use std::fmt;
 
-use postgres_types::FromSqlOwned;
+use gaussdb_types::FromSqlOwned;
 use time_03::{format_description, OffsetDateTime, PrimitiveDateTime};
-use tokio_postgres::{
+use tokio_gaussdb::{
     types::{Date, Timestamp},
     Client,
 };

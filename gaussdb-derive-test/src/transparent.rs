@@ -1,10 +1,10 @@
-use postgres::{Client, NoTls};
-use postgres_types::{FromSql, ToSql};
+use gaussdb::{Client, NoTls};
+use gaussdb_types::{FromSql, ToSql};
 
 #[test]
 fn round_trip() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(transparent)]
+    #[gaussdb(transparent)]
     struct UserId(i32);
 
     assert_eq!(

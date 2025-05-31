@@ -1,4 +1,4 @@
-use postgres_types::to_sql_checked;
+use gaussdb_types::to_sql_checked;
 use std::collections::HashMap;
 use std::error::Error;
 use std::f32;
@@ -8,7 +8,7 @@ use std::net::IpAddr;
 use std::result;
 use std::str::FromStr;
 use std::time::{Duration, UNIX_EPOCH};
-use tokio_postgres::types::{FromSql, FromSqlOwned, IsNull, Kind, PgLsn, ToSql, Type, WrongType};
+use tokio_gaussdb::types::{FromSql, FromSqlOwned, IsNull, Kind, PgLsn, ToSql, Type, WrongType};
 
 use crate::connect;
 use bytes::BytesMut;
@@ -85,8 +85,8 @@ async fn test_name_params() {
         &[
             (Some("hello world".to_owned()), "'hello world'"),
             (
-                Some("イロハニホヘト チリヌルヲ".to_owned()),
-                "'イロハニホヘト チリヌルヲ'",
+                Some("イロハニホヘ�?チリヌル�?.to_owned()),
+                "'イロハニホヘ�?チリヌル�?",
             ),
             (None, "NULL"),
         ],
@@ -193,8 +193,8 @@ async fn test_varchar_params() {
         &[
             (Some("hello world".to_owned()), "'hello world'"),
             (
-                Some("イロハニホヘト チリヌルヲ".to_owned()),
-                "'イロハニホヘト チリヌルヲ'",
+                Some("イロハニホヘ�?チリヌル�?.to_owned()),
+                "'イロハニホヘ�?チリヌル�?",
             ),
             (None, "NULL"),
         ],
@@ -209,8 +209,8 @@ async fn test_text_params() {
         &[
             (Some("hello world".to_owned()), "'hello world'"),
             (
-                Some("イロハニホヘト チリヌルヲ".to_owned()),
-                "'イロハニホヘト チリヌルヲ'",
+                Some("イロハニホヘ�?チリヌル�?.to_owned()),
+                "'イロハニホヘ�?チリヌル�?",
             ),
             (None, "NULL"),
         ],

@@ -1,5 +1,5 @@
 use time_02::{OffsetDateTime, PrimitiveDateTime};
-use tokio_postgres::types::{Date, Timestamp};
+use tokio_gaussdb::types::{Date, Timestamp};
 
 use crate::types::test_type;
 

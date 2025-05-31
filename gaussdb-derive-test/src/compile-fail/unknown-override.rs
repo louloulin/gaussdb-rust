@@ -1,13 +1,13 @@
-use postgres_types::{FromSql, ToSql};
+use gaussdb_types::{FromSql, ToSql};
 
 #[derive(FromSql)]
-#[postgres(foo = "bar")]
+#[gaussdb(foo = "bar")]
 struct Foo {
     a: i32,
 }
 
 #[derive(ToSql)]
-#[postgres(foo = "bar")]
+#[gaussdb(foo = "bar")]
 struct Bar {
     a: i32,
 }

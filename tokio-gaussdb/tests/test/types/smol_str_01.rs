@@ -9,8 +9,8 @@ async fn test_smol_str() {
         &[
             (Some(SmolStr::new("hello world")), "'hello world'"),
             (
-                Some(SmolStr::new("イロハニホヘト チリヌルヲ")),
-                "'イロハニホヘト チリヌルヲ'",
+                Some(SmolStr::new("イロハニホヘ�?チリヌル�?)),
+                "'イロハニホヘ�?チリヌル�?",
             ),
             (None, "NULL"),
         ],

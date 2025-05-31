@@ -1,6 +1,6 @@
 use crate::{test_type, test_type_asymmetric};
-use postgres::{Client, NoTls};
-use postgres_types::{FromSql, ToSql, WrongType};
+use gaussdb::{Client, NoTls};
+use gaussdb_types::{FromSql, ToSql, WrongType};
 use std::error::Error;
 
 #[test]
@@ -47,13 +47,13 @@ fn defaults() {
 #[test]
 fn name_overrides() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "inventory_item")]
+    #[gaussdb(name = "inventory_item")]
     struct InventoryItem {
-        #[postgres(name = "name")]
+        #[gaussdb(name = "name")]
         _name: String,
-        #[postgres(name = "supplier_id")]
+        #[gaussdb(name = "supplier_id")]
         _supplier_id: i32,
-        #[postgres(name = "price")]
+        #[gaussdb(name = "price")]
         _price: Option<f64>,
     }
 
@@ -92,11 +92,11 @@ fn name_overrides() {
 #[test]
 fn rename_all_overrides() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "inventory_item", rename_all = "SCREAMING_SNAKE_CASE")]
+    #[gaussdb(name = "inventory_item", rename_all = "SCREAMING_SNAKE_CASE")]
     struct InventoryItem {
         name: String,
         supplier_id: i32,
-        #[postgres(name = "Price")]
+        #[gaussdb(name = "Price")]
         price: Option<f64>,
     }
 
@@ -166,7 +166,7 @@ fn wrong_name() {
 #[test]
 fn extra_field() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "inventory_item")]
+    #[gaussdb(name = "inventory_item")]
     struct InventoryItem {
         name: String,
         supplier_id: i32,
@@ -200,7 +200,7 @@ fn extra_field() {
 #[test]
 fn missing_field() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "inventory_item")]
+    #[gaussdb(name = "inventory_item")]
     struct InventoryItem {
         name: String,
         supplier_id: i32,
@@ -230,7 +230,7 @@ fn missing_field() {
 #[test]
 fn wrong_type() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "inventory_item")]
+    #[gaussdb(name = "inventory_item")]
     struct InventoryItem {
         name: String,
         supplier_id: i32,
@@ -262,7 +262,7 @@ fn wrong_type() {
 #[test]
 fn raw_ident_field() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "inventory_item")]
+    #[gaussdb(name = "inventory_item")]
     struct InventoryItem {
         r#type: String,
     }
@@ -296,7 +296,7 @@ fn generics() {
 
     // doesn't make sense to implement derived FromSql on a type with borrows
     #[derive(ToSql, Debug, PartialEq)]
-    #[postgres(name = "InventoryItem")]
+    #[gaussdb(name = "InventoryItem")]
     struct InventoryItemRef<'a, T: 'a + Clone, U>
     where
         U: 'a + Clone,

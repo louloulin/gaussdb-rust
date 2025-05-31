@@ -1,4 +1,4 @@
-//! An internal crate for `postgres-types`.
+//! An internal crate for `gaussdb-types`.
 
 #![recursion_limit = "256"]
 extern crate proc_macro;
@@ -14,7 +14,7 @@ mod fromsql;
 mod overrides;
 mod tosql;
 
-#[proc_macro_derive(ToSql, attributes(postgres))]
+#[proc_macro_derive(ToSql, attributes(gaussdb, postgres))]
 pub fn derive_tosql(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input);
 
@@ -23,7 +23,7 @@ pub fn derive_tosql(input: TokenStream) -> TokenStream {
         .into()
 }
 
-#[proc_macro_derive(FromSql, attributes(postgres))]
+#[proc_macro_derive(FromSql, attributes(gaussdb, postgres))]
 pub fn derive_fromsql(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input);
 

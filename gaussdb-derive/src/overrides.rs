@@ -20,13 +20,14 @@ impl Overrides {
         };
 
         for attr in attrs {
-            if !attr.path().is_ident("postgres") {
+            if !attr.path().is_ident("postgres") && !attr.path().is_ident("gaussdb") {
                 continue;
             }
 
+            let attr_name = if attr.path().is_ident("postgres") { "postgres" } else { "gaussdb" };
             let list = match &attr.meta {
                 Meta::List(ref list) => list,
-                bad => return Err(Error::new_spanned(bad, "expected a #[postgres(...)]")),
+                bad => return Err(Error::new_spanned(bad, format!("expected a #[{}(...)]", attr_name))),
             };
 
             let nested = list.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)?;
@@ -80,7 +81,7 @@ impl Overrides {
                             if overrides.allow_mismatch {
                                 return Err(Error::new_spanned(
                                     path,
-                                    "#[postgres(allow_mismatch)] is not allowed with #[postgres(transparent)]",
+                                    format!("#[{}(allow_mismatch)] is not allowed with #[{}(transparent)]", attr_name, attr_name),
                                 ));
                             }
                             overrides.transparent = true;
@@ -88,7 +89,7 @@ impl Overrides {
                             if overrides.transparent {
                                 return Err(Error::new_spanned(
                                     path,
-                                    "#[postgres(transparent)] is not allowed with #[postgres(allow_mismatch)]",
+                                    format!("#[{}(transparent)] is not allowed with #[{}(allow_mismatch)]", attr_name, attr_name),
                                 ));
                             }
                             overrides.allow_mismatch = true;

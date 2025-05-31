@@ -1,7 +1,7 @@
 use crate::connect;
 use futures_util::{pin_mut, TryStreamExt};
-use tokio_postgres::binary_copy::{BinaryCopyInWriter, BinaryCopyOutStream};
-use tokio_postgres::types::Type;
+use tokio_gaussdb::binary_copy::{BinaryCopyInWriter, BinaryCopyOutStream};
+use tokio_gaussdb::types::Type;
 
 #[tokio::test]
 async fn write_basic() {

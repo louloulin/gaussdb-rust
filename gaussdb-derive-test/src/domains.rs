@@ -1,6 +1,6 @@
 use crate::test_type;
-use postgres::{Client, NoTls};
-use postgres_types::{FromSql, ToSql, WrongType};
+use gaussdb::{Client, NoTls};
+use gaussdb_types::{FromSql, ToSql, WrongType};
 use std::error::Error;
 
 #[test]
@@ -28,7 +28,7 @@ fn defaults() {
 #[test]
 fn name_overrides() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "session_id")]
+    #[gaussdb(name = "session_id")]
     struct SessionId(Vec<u8>);
 
     let mut conn = Client::connect("user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres", NoTls).unwrap();
@@ -69,7 +69,7 @@ fn wrong_name() {
 #[test]
 fn wrong_type() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "session_id")]
+    #[gaussdb(name = "session_id")]
     struct SessionId(i32);
 
     let mut conn = Client::connect("user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres", NoTls).unwrap();
@@ -88,11 +88,11 @@ fn wrong_type() {
 #[test]
 fn domain_in_composite() {
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "domain")]
+    #[gaussdb(name = "domain")]
     struct Domain(String);
 
     #[derive(FromSql, ToSql, Debug, PartialEq)]
-    #[postgres(name = "composite")]
+    #[gaussdb(name = "composite")]
     struct Composite {
         domain: Domain,
     }

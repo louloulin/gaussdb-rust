@@ -1,7 +1,7 @@
 use futures_util::FutureExt;
 use openssl::ssl::{SslConnector, SslMethod};
 use tokio::net::TcpStream;
-use tokio_postgres::tls::TlsConnect;
+use tokio_gaussdb::tls::TlsConnect;
 
 use super::*;
 
@@ -12,7 +12,7 @@ where
 {
     let stream = TcpStream::connect("127.0.0.1:5433").await.unwrap();
 
-    let builder = s.parse::<tokio_postgres::Config>().unwrap();
+    let builder = s.parse::<tokio_gaussdb::Config>().unwrap();
     let (client, connection) = builder.connect_raw(stream, tls).await.unwrap();
 
     let connection = connection.map(|r| r.unwrap());
@@ -83,7 +83,7 @@ async fn require_channel_binding_err() {
 
     let stream = TcpStream::connect("127.0.0.1:5433").await.unwrap();
     let builder = "user=pass_user password=password dbname=postgres channel_binding=require"
-        .parse::<tokio_postgres::Config>()
+        .parse::<tokio_gaussdb::Config>()
         .unwrap();
     builder.connect_raw(stream, connector).await.err().unwrap();
 }
@@ -107,7 +107,7 @@ async fn runtime() {
     builder.set_ca_file("../test/server.crt").unwrap();
     let connector = MakeTlsConnector::new(builder.build());
 
-    let (client, connection) = tokio_postgres::connect(
+    let (client, connection) = tokio_gaussdb::connect(
         "host=localhost port=5433 user=ssl_user password=password sslmode=require",
         connector,
     )

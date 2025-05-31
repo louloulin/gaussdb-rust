@@ -1,35 +1,35 @@
-use postgres_types::{FromSql, ToSql};
+use gaussdb_types::{FromSql, ToSql};
 
 #[derive(ToSql, Debug)]
-#[postgres(transparent)]
+#[gaussdb(transparent)]
 struct ToSqlTransparentStruct {
     a: i32
 }
 
 #[derive(FromSql, Debug)]
-#[postgres(transparent)]
+#[gaussdb(transparent)]
 struct FromSqlTransparentStruct {
     a: i32
 }
 
 #[derive(ToSql, Debug)]
-#[postgres(transparent)]
+#[gaussdb(transparent)]
 enum ToSqlTransparentEnum {
     Foo
 }
 
 #[derive(FromSql, Debug)]
-#[postgres(transparent)]
+#[gaussdb(transparent)]
 enum FromSqlTransparentEnum {
     Foo
 }
 
 #[derive(ToSql, Debug)]
-#[postgres(transparent)]
+#[gaussdb(transparent)]
 struct ToSqlTransparentTwoFieldTupleStruct(i32, i32);
 
 #[derive(FromSql, Debug)]
-#[postgres(transparent)]
+#[gaussdb(transparent)]
 struct FromSqlTransparentTwoFieldTupleStruct(i32, i32);
 
 fn main() {}

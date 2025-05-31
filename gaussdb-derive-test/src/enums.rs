@@ -1,6 +1,6 @@
 use crate::test_type;
-use postgres::{error::DbError, Client, NoTls};
-use postgres_types::{FromSql, ToSql, WrongType};
+use gaussdb::{error::DbError, Client, NoTls};
+use gaussdb_types::{FromSql, ToSql, WrongType};
 use std::error::Error;
 
 #[test]
@@ -25,13 +25,13 @@ fn defaults() {
 #[test]
 fn name_overrides() {
     #[derive(Debug, ToSql, FromSql, PartialEq)]
-    #[postgres(name = "mood")]
+    #[gaussdb(name = "mood")]
     enum Mood {
-        #[postgres(name = "sad")]
+        #[gaussdb(name = "sad")]
         Sad,
-        #[postgres(name = "ok")]
+        #[gaussdb(name = "ok")]
         Ok,
-        #[postgres(name = "happy")]
+        #[gaussdb(name = "happy")]
         Happy,
     }
 
@@ -56,10 +56,10 @@ fn name_overrides() {
 #[test]
 fn rename_all_overrides() {
     #[derive(Debug, ToSql, FromSql, PartialEq)]
-    #[postgres(name = "mood", rename_all = "snake_case")]
+    #[gaussdb(name = "mood", rename_all = "snake_case")]
     enum Mood {
         VerySad,
-        #[postgres(name = "okay")]
+        #[gaussdb(name = "okay")]
         Ok,
         VeryHappy,
     }
@@ -101,7 +101,7 @@ fn wrong_name() {
 #[test]
 fn extra_variant() {
     #[derive(Debug, ToSql, FromSql, PartialEq)]
-    #[postgres(name = "foo")]
+    #[gaussdb(name = "foo")]
     enum Foo {
         Bar,
         Baz,
@@ -119,7 +119,7 @@ fn extra_variant() {
 #[test]
 fn missing_variant() {
     #[derive(Debug, ToSql, FromSql, PartialEq)]
-    #[postgres(name = "foo")]
+    #[gaussdb(name = "foo")]
     enum Foo {
         Bar,
     }
@@ -135,7 +135,7 @@ fn missing_variant() {
 #[test]
 fn allow_mismatch_enums() {
     #[derive(Debug, ToSql, FromSql, PartialEq)]
-    #[postgres(allow_mismatch)]
+    #[gaussdb(allow_mismatch)]
     enum Foo {
         Bar,
     }
@@ -151,7 +151,7 @@ fn allow_mismatch_enums() {
 #[test]
 fn missing_enum_variant() {
     #[derive(Debug, ToSql, FromSql, PartialEq)]
-    #[postgres(allow_mismatch)]
+    #[gaussdb(allow_mismatch)]
     enum Foo {
         Bar,
         Buz,
@@ -170,11 +170,11 @@ fn missing_enum_variant() {
 #[test]
 fn allow_mismatch_and_renaming() {
     #[derive(Debug, ToSql, FromSql, PartialEq)]
-    #[postgres(name = "foo", allow_mismatch)]
+    #[gaussdb(name = "foo", allow_mismatch)]
     enum Foo {
-        #[postgres(name = "bar")]
+        #[gaussdb(name = "bar")]
         Bar,
-        #[postgres(name = "buz")]
+        #[gaussdb(name = "buz")]
         Buz,
     }
 
@@ -189,7 +189,7 @@ fn allow_mismatch_and_renaming() {
 #[test]
 fn wrong_name_and_allow_mismatch() {
     #[derive(Debug, ToSql, FromSql, PartialEq)]
-    #[postgres(allow_mismatch)]
+    #[gaussdb(allow_mismatch)]
     enum Foo {
         Bar,
     }

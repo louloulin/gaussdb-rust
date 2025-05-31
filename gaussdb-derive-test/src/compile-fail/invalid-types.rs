@@ -1,4 +1,4 @@
-use postgres_types::{FromSql, ToSql};
+use gaussdb_types::{FromSql, ToSql};
 
 #[derive(ToSql)]
 struct ToSqlUnit;

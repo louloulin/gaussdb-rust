@@ -12,10 +12,10 @@ use std::task::{Context, Poll};
 use std::time::Duration;
 use tokio::net::TcpStream;
 use tokio::time;
-use tokio_postgres::error::SqlState;
-use tokio_postgres::tls::{NoTls, NoTlsStream};
-use tokio_postgres::types::{Kind, Type};
-use tokio_postgres::{
+use tokio_gaussdb::error::SqlState;
+use tokio_gaussdb::tls::{NoTls, NoTlsStream};
+use tokio_gaussdb::types::{Kind, Type};
+use tokio_gaussdb::{
     AsyncMessage, Client, Config, Connection, Error, IsolationLevel, SimpleQueryMessage,
 };
 
@@ -977,7 +977,7 @@ async fn query_typed_no_transaction() {
         .await
         .unwrap();
 
-    let rows: Vec<tokio_postgres::Row> = client
+    let rows: Vec<tokio_gaussdb::Row> = client
         .query_typed(
             "SELECT name, age, 'literal', 5 FROM foo WHERE name <> $1 AND age < $2 ORDER BY age",
             &[(&"alice", Type::TEXT), (&50i32, Type::INT4)],
@@ -1024,7 +1024,7 @@ async fn query_typed_with_transaction() {
 
     let transaction = client.transaction().await.unwrap();
 
-    let rows: Vec<tokio_postgres::Row> = transaction
+    let rows: Vec<tokio_gaussdb::Row> = transaction
         .query_typed(
             "INSERT INTO foo (name, age) VALUES ($1, $2), ($3, $4), ($5, $6) returning name, age",
             &[
@@ -1051,7 +1051,7 @@ async fn query_typed_with_transaction() {
         ]
     );
 
-    let rows: Vec<tokio_postgres::Row> = transaction
+    let rows: Vec<tokio_gaussdb::Row> = transaction
         .query_typed(
             "SELECT name, age, 'literal', 5 FROM foo WHERE name <> $1 AND age < $2 ORDER BY age",
             &[(&"alice", Type::TEXT), (&50i32, Type::INT4)],
