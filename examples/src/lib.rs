@@ -265,6 +265,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_database_connectivity() {
+        use std::env;
+
         // This test requires a running database
         // Skip if DATABASE_URL is not set
         if env::var("DATABASE_URL").is_err() {
