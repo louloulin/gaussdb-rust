@@ -27,7 +27,6 @@ pub fn md5_hash(username: &[u8], password: &[u8], salt: [u8; 4]) -> String {
 ///
 /// This implements the SHA256_MD5 authentication method used by GaussDB and OpenGauss.
 /// The process is: MD5(password + username) -> SHA256(md5_hex + salt) -> "sha256" + hex
-/// Based on GaussDB R2DBC implementation: SHA256_MD5encode
 #[inline]
 pub fn sha256_hash(username: &[u8], password: &[u8], salt: &[u8]) -> String {
     // Step 1: MD5(password + username)
@@ -49,7 +48,6 @@ pub fn sha256_hash(username: &[u8], password: &[u8], salt: &[u8]) -> String {
 /// Hashes authentication information using MD5_SHA256 method for GaussDB/OpenGauss.
 ///
 /// This implements the MD5_SHA256 authentication method used by GaussDB and OpenGauss.
-/// Based on GaussDB R2DBC implementation: MD5_SHA256encode
 /// The process involves PBKDF2, HMAC-SHA256, and MD5 operations.
 #[inline]
 pub fn md5_sha256_hash(password: &str, random_code: &str, salt: &[u8]) -> String {
