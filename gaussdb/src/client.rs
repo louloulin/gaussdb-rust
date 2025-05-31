@@ -5,14 +5,14 @@ use crate::{
 };
 use std::task::Poll;
 use std::time::Duration;
-use tokio_postgres::tls::{MakeTlsConnect, TlsConnect};
-use tokio_postgres::types::{BorrowToSql, ToSql, Type};
-use tokio_postgres::{Error, Row, SimpleQueryMessage, Socket};
+use tokio_gaussdb::tls::{MakeTlsConnect, TlsConnect};
+use tokio_gaussdb::types::{BorrowToSql, ToSql, Type};
+use tokio_gaussdb::{Error, Row, SimpleQueryMessage, Socket};
 
 /// A synchronous PostgreSQL client.
 pub struct Client {
     connection: Connection,
-    client: tokio_postgres::Client,
+    client: tokio_gaussdb::Client,
 }
 
 impl Drop for Client {
@@ -22,7 +22,7 @@ impl Drop for Client {
 }
 
 impl Client {
-    pub(crate) fn new(connection: Connection, client: tokio_postgres::Client) -> Client {
+    pub(crate) fn new(connection: Connection, client: tokio_gaussdb::Client) -> Client {
         Client { connection, client }
     }
 

@@ -13,12 +13,12 @@ use std::sync::Arc;
 use std::time::Duration;
 use tokio::runtime;
 #[doc(inline)]
-pub use tokio_postgres::config::{
+pub use tokio_gaussdb::config::{
     ChannelBinding, Host, LoadBalanceHosts, SslMode, SslNegotiation, TargetSessionAttrs,
 };
-use tokio_postgres::error::DbError;
-use tokio_postgres::tls::{MakeTlsConnect, TlsConnect};
-use tokio_postgres::{Error, Socket};
+use tokio_gaussdb::error::DbError;
+use tokio_gaussdb::tls::{MakeTlsConnect, TlsConnect};
+use tokio_gaussdb::{Error, Socket};
 
 /// Connection configuration.
 ///
@@ -131,7 +131,7 @@ use tokio_postgres::{Error, Socket};
 /// ```
 #[derive(Clone)]
 pub struct Config {
-    config: tokio_postgres::Config,
+    config: tokio_gaussdb::Config,
     notice_callback: Arc<dyn Fn(DbError) + Send + Sync>,
 }
 
@@ -152,7 +152,7 @@ impl Default for Config {
 impl Config {
     /// Creates a new configuration.
     pub fn new() -> Config {
-        tokio_postgres::Config::new().into()
+        tokio_gaussdb::Config::new().into()
     }
 
     /// Sets the user to authenticate with.
@@ -439,7 +439,7 @@ impl Config {
     /// Notices are distinct from notifications, which are instead accessible
     /// via the [`Notifications`] API.
     ///
-    /// [`AsyncMessage::Notice`]: tokio_postgres::AsyncMessage::Notice
+    /// [`AsyncMessage::Notice`]: tokio_gaussdb::AsyncMessage::Notice
     /// [`Notifications`]: crate::Notifications
     pub fn notice_callback<F>(&mut self, f: F) -> &mut Config
     where
@@ -473,12 +473,12 @@ impl FromStr for Config {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Config, Error> {
-        s.parse::<tokio_postgres::Config>().map(Config::from)
+        s.parse::<tokio_gaussdb::Config>().map(Config::from)
     }
 }
 
-impl From<tokio_postgres::Config> for Config {
-    fn from(config: tokio_postgres::Config) -> Config {
+impl From<tokio_gaussdb::Config> for Config {
+    fn from(config: tokio_gaussdb::Config) -> Config {
         Config {
             config,
             notice_callback: Arc::new(|notice| {

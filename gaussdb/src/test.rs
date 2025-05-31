@@ -3,9 +3,9 @@ use std::str::FromStr;
 use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
-use tokio_postgres::error::SqlState;
-use tokio_postgres::types::Type;
-use tokio_postgres::NoTls;
+use tokio_gaussdb::error::SqlState;
+use tokio_gaussdb::types::Type;
+use tokio_gaussdb::NoTls;
 
 use super::*;
 use crate::binary_copy::{BinaryCopyInWriter, BinaryCopyOutIter};

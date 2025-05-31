@@ -1,14 +1,14 @@
 use tokio::runtime;
-use tokio_postgres::tls::MakeTlsConnect;
-use tokio_postgres::{Error, Socket};
+use tokio_gaussdb::tls::MakeTlsConnect;
+use tokio_gaussdb::{Error, Socket};
 
 /// The capability to request cancellation of in-progress queries on a
 /// connection.
 #[derive(Clone)]
-pub struct CancelToken(tokio_postgres::CancelToken);
+pub struct CancelToken(tokio_gaussdb::CancelToken);
 
 impl CancelToken {
-    pub(crate) fn new(inner: tokio_postgres::CancelToken) -> CancelToken {
+    pub(crate) fn new(inner: tokio_gaussdb::CancelToken) -> CancelToken {
         CancelToken(inner)
     }
 
