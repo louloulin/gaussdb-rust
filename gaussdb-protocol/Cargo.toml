@@ -1,11 +1,11 @@
 [package]
-name = "postgres-protocol"
-version = "0.6.8"
-authors = ["Steven Fackler <sfackler@gmail.com>"]
+name = "gaussdb-protocol"
+version = "0.1.0"
+authors = ["Steven Fackler <sfackler@gmail.com>", "louloulin <729883852@qq.com>"]
 edition = "2018"
-description = "Low level Postgres protocol APIs"
+description = "Low level GaussDB protocol APIs based on PostgreSQL"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/sfackler/rust-postgres"
+repository = "https://github.com/HuaweiCloudDeveloper/gaussdb-rust"
 readme = "../README.md"
 
 [features]

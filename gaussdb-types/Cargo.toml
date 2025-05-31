@@ -1,19 +1,19 @@
 [package]
-name = "postgres-types"
-version = "0.2.9"
-authors = ["Steven Fackler <sfackler@gmail.com>"]
+name = "gaussdb-types"
+version = "0.1.0"
+authors = ["Steven Fackler <sfackler@gmail.com>", "louloulin <729883852@qq.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
-description = "Conversions between Rust and Postgres values"
-repository = "https://github.com/sfackler/rust-postgres"
+description = "Conversions between Rust and GaussDB values based on PostgreSQL"
+repository = "https://github.com/HuaweiCloudDeveloper/gaussdb-rust"
 readme = "../README.md"
-keywords = ["database", "postgres", "postgresql", "sql"]
+keywords = ["database", "gaussdb", "opengauss", "postgresql", "sql"]
 categories = ["database"]
 
 [features]
-derive = ["postgres-derive"]
+derive = ["gaussdb-derive"]
 array-impls = ["array-init"]
-js = ["postgres-protocol/js"]
+js = ["gaussdb-protocol/js"]
 with-bit-vec-0_6 = ["bit-vec-06"]
 with-cidr-0_2 = ["cidr-02"]
 with-cidr-0_3 = ["cidr-03"]
@@ -34,8 +34,8 @@ with-time-0_3 = ["time-03"]
 [dependencies]
 bytes = "1.0"
 fallible-iterator = "0.2"
-postgres-protocol = { version = "0.6.8", path = "../postgres-protocol" }
-postgres-derive = { version = "0.4.6", optional = true, path = "../postgres-derive" }
+gaussdb-protocol = { version = "0.1.0", path = "../gaussdb-protocol" }
+gaussdb-derive = { version = "0.1.0", optional = true, path = "../gaussdb-derive" }
 
 array-init = { version = "2", optional = true }
 bit-vec-06 = { version = "0.6", package = "bit-vec", optional = true }

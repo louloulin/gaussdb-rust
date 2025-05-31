@@ -1,10 +1,10 @@
 [package]
-name = "postgres-native-tls"
+name = "gaussdb-openssl"
 version = "0.5.1"
 authors = ["Steven Fackler <sfackler@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
-description = "TLS support for tokio-postgres via native-tls"
+description = "TLS support for tokio-postgres via openssl"
 repository = "https://github.com/sfackler/rust-postgres"
 readme = "../README.md"
 
@@ -13,15 +13,15 @@ circle-ci = { repository = "sfackler/rust-postgres" }
 
 [features]
 default = ["runtime"]
-runtime = ["tokio-postgres/runtime"]
+runtime = ["tokio-gaussdb/runtime"]
 
 [dependencies]
-native-tls = { version = "0.2", features = ["alpn"] }
+openssl = { version = "0.10", features = ["vendored"] }
 tokio = "1.0"
-tokio-native-tls = "0.3"
-tokio-postgres = { version = "0.7.11", path = "../tokio-postgres", default-features = false }
+tokio-openssl = "0.6"
+tokio-gaussdb = { version = "0.1.0", path = "../tokio-gaussdb", default-features = false }
 
 [dev-dependencies]
 futures-util = "0.3"
 tokio = { version = "1.0", features = ["macros", "net", "rt"] }
-postgres = { version = "0.19.8", path = "../postgres" }
+gaussdb = { version = "0.1.0", path = "../gaussdb" }

@@ -1,0 +1,11 @@
+[package]
+name = "gaussdb-derive-test"
+version = "0.1.0"
+authors = ["Steven Fackler <sfackler@gmail.com>", "louloulin <729883852@qq.com>"]
+edition = "2018"
+
+[dev-dependencies]
+trybuild = "1.0"
+
+gaussdb-types = { path = "../gaussdb-types", features = ["derive"] }
+gaussdb = { path = "../gaussdb" }
