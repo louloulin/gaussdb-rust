@@ -20,7 +20,7 @@ pub fn expand_derive_fromsql(input: DeriveInput) -> Result<TokenStream, Error> {
     if (overrides.name.is_some() || overrides.rename_all.is_some()) && overrides.transparent {
         return Err(Error::new_spanned(
             &input,
-            "#[postgres(transparent)] is not allowed with #[postgres(name = \"...\")] or #[postgres(rename_all = \"...\")]",
+            "#[gaussdb(transparent)] is not allowed with #[gaussdb(name = \"...\")] or #[gaussdb(rename_all = \"...\")]",
         ));
     }
 
@@ -44,7 +44,7 @@ pub fn expand_derive_fromsql(input: DeriveInput) -> Result<TokenStream, Error> {
             _ => {
                 return Err(Error::new_spanned(
                     input,
-                    "#[postgres(transparent)] may only be applied to single field tuple structs",
+                    "#[gaussdb(transparent)] may only be applied to single field tuple structs",
                 ))
             }
         }
@@ -64,7 +64,7 @@ pub fn expand_derive_fromsql(input: DeriveInput) -> Result<TokenStream, Error> {
             _ => {
                 return Err(Error::new_spanned(
                     input,
-                    "#[postgres(allow_mismatch)] may only be applied to enums",
+                    "#[gaussdb(allow_mismatch)] may only be applied to enums",
                 ));
             }
         }
@@ -119,8 +119,8 @@ pub fn expand_derive_fromsql(input: DeriveInput) -> Result<TokenStream, Error> {
     let (impl_generics, _, _) = generics.split_for_impl();
     let (_, ty_generics, where_clause) = input.generics.split_for_impl();
     let out = quote! {
-        impl #impl_generics postgres_types::FromSql<#lifetime> for #ident #ty_generics #where_clause {
-            fn from_sql(_type: &postgres_types::Type, buf: &#lifetime [u8])
+        impl #impl_generics gaussdb_types::FromSql<#lifetime> for #ident #ty_generics #where_clause {
+            fn from_sql(_type: &gaussdb_types::Type, buf: &#lifetime [u8])
                         -> std::result::Result<#ident #ty_generics,
                                                std::boxed::Box<dyn std::error::Error +
                                                                std::marker::Sync +
@@ -128,7 +128,7 @@ pub fn expand_derive_fromsql(input: DeriveInput) -> Result<TokenStream, Error> {
                 #to_sql_body
             }
 
-            fn accepts(type_: &postgres_types::Type) -> bool {
+            fn accepts(type_: &gaussdb_types::Type) -> bool {
                 #accepts_body
             }
         }
@@ -140,7 +140,7 @@ pub fn expand_derive_fromsql(input: DeriveInput) -> Result<TokenStream, Error> {
 fn transparent_body(ident: &Ident, field: &syn::Field) -> TokenStream {
     let ty = &field.ty;
     quote! {
-        <#ty as postgres_types::FromSql>::from_sql(_type, buf).map(#ident)
+        <#ty as gaussdb_types::FromSql>::from_sql(_type, buf).map(#ident)
     }
 }
 
@@ -168,7 +168,7 @@ fn domain_accepts_body(name: &str, field: &syn::Field) -> TokenStream {
     let normal_body = accepts::domain_body(name, field);
 
     quote! {
-        if <#ty as postgres_types::FromSql>::accepts(type_) {
+        if <#ty as gaussdb_types::FromSql>::accepts(type_) {
             return true;
         }
 
@@ -179,7 +179,7 @@ fn domain_accepts_body(name: &str, field: &syn::Field) -> TokenStream {
 fn domain_body(ident: &Ident, field: &syn::Field) -> TokenStream {
     let ty = &field.ty;
     quote! {
-        <#ty as postgres_types::FromSql>::from_sql(_type, buf).map(#ident)
+        <#ty as gaussdb_types::FromSql>::from_sql(_type, buf).map(#ident)
     }
 }
 
@@ -193,12 +193,12 @@ fn composite_body(ident: &Ident, fields: &[Field]) -> TokenStream {
 
     quote! {
         let fields = match *_type.kind() {
-            postgres_types::Kind::Composite(ref fields) => fields,
+            gaussdb_types::Kind::Composite(ref fields) => fields,
             _ => unreachable!(),
         };
 
         let mut buf = buf;
-        let num_fields = postgres_types::private::read_be_i32(&mut buf)?;
+        let num_fields = gaussdb_types::private::read_be_i32(&mut buf)?;
         if num_fields as usize != fields.len() {
             return std::result::Result::Err(
                 std::convert::Into::into(format!("invalid field count: {} vs {}", num_fields, fields.len())));
@@ -209,7 +209,7 @@ fn composite_body(ident: &Ident, fields: &[Field]) -> TokenStream {
         )*
 
         for field in fields {
-            let oid = postgres_types::private::read_be_i32(&mut buf)? as u32;
+            let oid = gaussdb_types::private::read_be_i32(&mut buf)? as u32;
             if oid != field.type_().oid() {
                 return std::result::Result::Err(std::convert::Into::into("unexpected OID"));
             }
@@ -218,7 +218,7 @@ fn composite_body(ident: &Ident, fields: &[Field]) -> TokenStream {
                 #(
                     #field_names => {
                         #temp_vars = std::option::Option::Some(
-                            postgres_types::private::read_value(field.type_(), &mut buf)?);
+                            gaussdb_types::private::read_value(field.type_(), &mut buf)?);
                     }
                 )*
                 _ => unreachable!(),

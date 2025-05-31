@@ -10,7 +10,7 @@ pub fn transparent_body(field: &syn::Field) -> TokenStream {
     let ty = &field.ty;
 
     quote! {
-        <#ty as ::postgres_types::ToSql>::accepts(type_)
+        <#ty as ::gaussdb_types::ToSql>::accepts(type_)
     }
 }
 
@@ -23,8 +23,8 @@ pub fn domain_body(name: &str, field: &syn::Field) -> TokenStream {
         }
 
         match *type_.kind() {
-            ::postgres_types::Kind::Domain(ref type_) => {
-                <#ty as ::postgres_types::ToSql>::accepts(type_)
+            ::gaussdb_types::Kind::Domain(ref type_) => {
+                <#ty as ::gaussdb_types::ToSql>::accepts(type_)
             }
             _ => false,
         }
@@ -46,7 +46,7 @@ pub fn enum_body(name: &str, variants: &[Variant], allow_mismatch: bool) -> Toke
             }
 
             match *type_.kind() {
-                ::postgres_types::Kind::Enum(ref variants) => {
+                ::gaussdb_types::Kind::Enum(ref variants) => {
                     if variants.len() != #num_variants {
                         return false;
                     }
@@ -79,7 +79,7 @@ pub fn composite_body(name: &str, trait_: &str, fields: &[Field]) -> TokenStream
         }
 
         match *type_.kind() {
-            ::postgres_types::Kind::Composite(ref fields) => {
+            ::gaussdb_types::Kind::Composite(ref fields) => {
                 if fields.len() != #num_fields {
                     return false;
                 }
@@ -88,7 +88,7 @@ pub fn composite_body(name: &str, trait_: &str, fields: &[Field]) -> TokenStream
                     match f.name() {
                         #(
                             #field_names => {
-                                <#field_types as ::postgres_types::#traits>::accepts(f.type_())
+                                <#field_types as ::gaussdb_types::#traits>::accepts(f.type_())
                             }
                         )*
                         _ => false,

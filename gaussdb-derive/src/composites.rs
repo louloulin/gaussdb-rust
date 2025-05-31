@@ -54,7 +54,7 @@ pub(crate) fn new_derive_path(last: PathSegment) -> Path {
         segments: Punctuated::new(),
     };
     path.segments
-        .push(Ident::new("postgres_types", Span::call_site()).into());
+        .push(Ident::new("gaussdb_types", Span::call_site()).into());
     path.segments.push(last);
     path
 }
