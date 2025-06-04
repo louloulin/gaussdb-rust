@@ -1,14 +1,15 @@
 [workspace]
 members = [
     "codegen",
-    "postgres",
-    "postgres-derive",
-    "postgres-derive-test",
-    "postgres-native-tls",
-    "postgres-openssl",
-    "postgres-protocol",
-    "postgres-types",
-    "tokio-postgres",
+    "gaussdb",
+    "gaussdb-derive",
+    "gaussdb-derive-test",
+    "gaussdb-native-tls",
+    "gaussdb-openssl",
+    "gaussdb-protocol",
+    "gaussdb-types",
+    "tokio-gaussdb",
+    "examples",
 ]
 resolver = "2"
 

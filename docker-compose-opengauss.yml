@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  opengauss:
+    image: opengauss/opengauss-server:latest
+    container_name: opengauss-test
+    privileged: true
+    restart: unless-stopped
+    ports:
+      - "5433:5432"  # 映射到5433端口，与现有PostgreSQL测试保持一致
+    environment:
+      - GS_PASSWORD=Gaussdb@123  # OpenGauss密码：大写字母+小写字母+数字+特殊字符，长度>=8
+      - GS_NODENAME=opengauss
+      - GS_USERNAME=gaussdb   # 自定义用户名
+
+    #volumes:
+      #- opengauss_data:/var/lib/opengauss/data
+      #- ./docker/opengauss_setup.sh:/docker-entrypoint-initdb.d/opengauss_setup.sh
+    networks:
+      - gaussdb_network
+    healthcheck:
+      test: ["CMD-SHELL", "gsql -d postgres -U gaussdb -c 'SELECT 1;' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+networks:
+  gaussdb_network:
+    driver: bridge

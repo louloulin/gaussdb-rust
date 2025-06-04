@@ -1,0 +1,18 @@
+[package]
+name = "gaussdb-derive"
+version = "0.1.0"
+authors = ["Steven Fackler <sfackler@palantir.com>", "louloulin <729883852@qq.com>"]
+license = "MIT OR Apache-2.0"
+edition = "2018"
+description = "An internal crate used by gaussdb-types"
+repository = "https://github.com/HuaweiCloudDeveloper/gaussdb-rust"
+
+[lib]
+proc-macro = true
+test = false
+
+[dependencies]
+syn = "2.0"
+proc-macro2 = "1.0"
+quote = "1.0"
+heck = "0.5"

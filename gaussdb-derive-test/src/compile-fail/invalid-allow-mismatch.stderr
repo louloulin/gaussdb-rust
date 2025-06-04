@@ -1,0 +1,43 @@
+error: #[gaussdb(allow_mismatch)] may only be applied to enums
+ --> src/compile-fail/invalid-allow-mismatch.rs:4:1
+  |
+4 | / #[gaussdb(allow_mismatch)]
+5 | | struct ToSqlAllowMismatchStruct {
+6 | |     a: i32,
+7 | | }
+  | |_^
+
+error: #[gaussdb(allow_mismatch)] may only be applied to enums
+  --> src/compile-fail/invalid-allow-mismatch.rs:10:1
+   |
+10 | / #[gaussdb(allow_mismatch)]
+11 | | struct FromSqlAllowMismatchStruct {
+12 | |     a: i32,
+13 | | }
+   | |_^
+
+error: #[gaussdb(allow_mismatch)] may only be applied to enums
+  --> src/compile-fail/invalid-allow-mismatch.rs:16:1
+   |
+16 | / #[gaussdb(allow_mismatch)]
+17 | | struct ToSqlAllowMismatchTupleStruct(i32, i32);
+   | |_______________________________________________^
+
+error: #[gaussdb(allow_mismatch)] may only be applied to enums
+  --> src/compile-fail/invalid-allow-mismatch.rs:20:1
+   |
+20 | / #[gaussdb(allow_mismatch)]
+21 | | struct FromSqlAllowMismatchTupleStruct(i32, i32);
+   | |_________________________________________________^
+
+error: #[gaussdb(transparent)] is not allowed with #[gaussdb(allow_mismatch)]
+  --> src/compile-fail/invalid-allow-mismatch.rs:24:24
+   |
+24 | #[gaussdb(transparent, allow_mismatch)]
+   |                        ^^^^^^^^^^^^^^
+
+error: #[gaussdb(allow_mismatch)] is not allowed with #[gaussdb(transparent)]
+  --> src/compile-fail/invalid-allow-mismatch.rs:28:27
+   |
+28 | #[gaussdb(allow_mismatch, transparent)]
+   |                           ^^^^^^^^^^^

@@ -1,0 +1,51 @@
+[package]
+name = "gaussdb"
+version = "0.1.0"
+authors = ["Steven Fackler <sfackler@gmail.com>", "louloulin <729883852@qq.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "A native, synchronous GaussDB client based on PostgreSQL"
+repository = "https://github.com/HuaweiCloudDeveloper/gaussdb-rust"
+readme = "../README.md"
+keywords = ["database", "gaussdb", "opengauss", "postgresql", "sql"]
+categories = ["database"]
+
+[[bench]]
+name = "bench"
+harness = false
+
+[package.metadata.docs.rs]
+all-features = true
+
+[badges]
+circle-ci = { repository = "HuaweiCloudDeveloper/gaussdb-rust" }
+
+[features]
+array-impls = ["tokio-gaussdb/array-impls"]
+with-bit-vec-0_6 = ["tokio-gaussdb/with-bit-vec-0_6"]
+with-chrono-0_4 = ["tokio-gaussdb/with-chrono-0_4"]
+with-cidr-0_2 = ["tokio-gaussdb/with-cidr-0_2"]
+with-cidr-0_3 = ["tokio-gaussdb/with-cidr-0_3"]
+with-eui48-0_4 = ["tokio-gaussdb/with-eui48-0_4"]
+with-eui48-1 = ["tokio-gaussdb/with-eui48-1"]
+with-geo-types-0_6 = ["tokio-gaussdb/with-geo-types-0_6"]
+with-geo-types-0_7 = ["tokio-gaussdb/with-geo-types-0_7"]
+with-jiff-0_1 = ["tokio-gaussdb/with-jiff-0_1"]
+with-jiff-0_2 = ["tokio-gaussdb/with-jiff-0_2"]
+with-serde_json-1 = ["tokio-gaussdb/with-serde_json-1"]
+with-smol_str-01 = ["tokio-gaussdb/with-smol_str-01"]
+with-uuid-0_8 = ["tokio-gaussdb/with-uuid-0_8"]
+with-uuid-1 = ["tokio-gaussdb/with-uuid-1"]
+with-time-0_2 = ["tokio-gaussdb/with-time-0_2"]
+with-time-0_3 = ["tokio-gaussdb/with-time-0_3"]
+
+[dependencies]
+bytes = "1.0"
+fallible-iterator = "0.2"
+futures-util = { version = "0.3.14", features = ["sink"] }
+log = "0.4"
+tokio-gaussdb = { version = "0.1.0", path = "../tokio-gaussdb" }
+tokio = { version = "1.0", features = ["rt", "time"] }
+
+[dev-dependencies]
+criterion = "0.6"
