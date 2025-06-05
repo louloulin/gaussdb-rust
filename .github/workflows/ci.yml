@@ -72,7 +72,7 @@ jobs:
         with:
           path: target
           key: check-wasm32-target-${{ runner.os }}-${{ steps.rust-version.outputs.version }}-${{ hashFiles('Cargo.lock') }}
-      - run: cargo check --target wasm32-unknown-unknown --manifest-path tokio-postgres/Cargo.toml --no-default-features --features js
+      - run: cargo check --target wasm32-unknown-unknown --manifest-path tokio-gaussdb/Cargo.toml --no-default-features --features js
         env:
           RUSTFLAGS: --cfg getrandom_backend="wasm_js"
 
@@ -82,6 +82,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker compose up -d
+      - name: Wait for OpenGauss to be ready
+        run: |
+          echo "Waiting for OpenGauss to start..."
+          for i in {1..30}; do
+            if docker exec opengauss-ci gsql -U gaussdb -d postgres -c "SELECT 1;" 2>/dev/null; then
+              echo "OpenGauss is ready!"
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
       - uses: sfackler/actions/rustup@master
         with:
           version: 1.81.0
@@ -103,6 +114,13 @@ jobs:
         with:
           path: target
           key: test-target-${{ runner.os }}-${{ steps.rust-version.outputs.version }}-${{ hashFiles('Cargo.lock') }}y
-      - run: cargo test --all
-      - run: cargo test --manifest-path tokio-postgres/Cargo.toml --no-default-features
-      - run: cargo test --manifest-path tokio-postgres/Cargo.toml --all-features
+      - name: Run comprehensive tests
+        run: |
+          chmod +x scripts/ci-test.sh
+          ./scripts/ci-test.sh
+      - name: Run feature tests
+        run: |
+          cargo test --manifest-path tokio-gaussdb/Cargo.toml --no-default-features --lib
+          cargo test --manifest-path tokio-gaussdb/Cargo.toml --all-features --lib
+        env:
+          DATABASE_URL: "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres"
