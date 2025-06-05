@@ -5,7 +5,7 @@
 //! ```no_run
 //! use gaussdb::{Client, NoTls};
 //!
-//! # fn main() -> Result<(), postgres::Error> {
+//! # fn main() -> Result<(), gaussdb::Error> {
 //! let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
 //!
 //! client.batch_execute("
