@@ -62,7 +62,7 @@ impl Client {
     /// ```no_run
     /// use gaussdb::{Client, NoTls};
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let bar = 1i32;
@@ -97,7 +97,7 @@ impl Client {
     /// ```no_run
     /// use gaussdb::{Client, NoTls};
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let baz = true;
@@ -131,7 +131,7 @@ impl Client {
     /// ```no_run
     /// use gaussdb::{Client, NoTls};
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let baz = true;
@@ -165,7 +165,7 @@ impl Client {
     /// ```no_run
     /// use gaussdb::{Client, NoTls};
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let baz = true;
@@ -204,7 +204,7 @@ impl Client {
     /// use fallible_iterator::FallibleIterator;
     /// use std::iter;
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let baz = true;
@@ -225,7 +225,7 @@ impl Client {
     /// # use gaussdb::{Client, NoTls};
     /// use gaussdb::types::ToSql;
     /// use fallible_iterator::FallibleIterator;
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// # let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let params: Vec<String> = vec![
@@ -292,7 +292,7 @@ impl Client {
     /// # use gaussdb::{Client, NoTls};
     /// use gaussdb::types::{ToSql, Type};
     /// use fallible_iterator::FallibleIterator;
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// # let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let params: Vec<(String, Type)> = vec![
@@ -332,7 +332,7 @@ impl Client {
     /// ```no_run
     /// use gaussdb::{Client, NoTls};
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let statement = client.prepare("SELECT name FROM people WHERE id = $1")?;
@@ -360,7 +360,7 @@ impl Client {
     /// use gaussdb::{Client, NoTls};
     /// use gaussdb::types::Type;
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let statement = client.prepare_typed(
@@ -496,7 +496,7 @@ impl Client {
     /// ```no_run
     /// use gaussdb::{Client, NoTls};
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let mut transaction = client.transaction()?;
@@ -522,7 +522,7 @@ impl Client {
     /// ```no_run
     /// use gaussdb::{Client, IsolationLevel, NoTls};
     ///
-    /// # fn main() -> Result<(), postgres::Error> {
+    /// # fn main() -> Result<(), gaussdb::Error> {
     /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
     ///
     /// let mut transaction = client.build_transaction()
