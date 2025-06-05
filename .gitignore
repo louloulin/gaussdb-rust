@@ -5,4 +5,12 @@ Cargo.lock
 *.iml
 .vscode
 plan/
-scripts/
+
+# Windows特定脚本
+scripts/bat/
+scripts/*.ps1
+scripts/*.bat
+
+# 临时文件
+*.tmp
+*.log
