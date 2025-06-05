@@ -36,7 +36,7 @@ thiserror = "1.0"
 
 # Optional features for advanced examples
 uuid = { version = "1.0", features = ["v4", "serde"], optional = true }
-bit-vec = { version = "0.6", optional = true }
+bit-vec = { version = "0.8", optional = true }
 
 [features]
 default = []
