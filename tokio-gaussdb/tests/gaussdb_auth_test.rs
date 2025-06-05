@@ -191,7 +191,7 @@ async fn test_nonexistent_user() {
 #[tokio::test]
 async fn test_connection_params() {
     // 测试各种连接字符串格式
-    let test_cases = vec![
+    let test_cases = [
         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
         "postgresql://gaussdb:Gaussdb%40123@localhost:5433/postgres",
         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres sslmode=disable",

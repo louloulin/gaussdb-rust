@@ -179,7 +179,7 @@ pub mod test_utils {
 
         let database_url = get_database_url();
         let _client =
-            Client::connect(&database_url, NoTls).map_err(|e| ExampleError::Database(e))?;
+            Client::connect(&database_url, NoTls).map_err(ExampleError::Database)?;
         Ok(())
     }
 
@@ -206,7 +206,7 @@ pub mod test_utils {
     pub fn create_test_table(client: &mut gaussdb::Client, table_name: &str) -> ExampleResult<()> {
         client
             .execute(&format!("DROP TABLE IF EXISTS {}", table_name), &[])
-            .map_err(|e| ExampleError::Database(e))?;
+            .map_err(ExampleError::Database)?;
         client
             .execute(
                 &format!(
@@ -220,7 +220,7 @@ pub mod test_utils {
                 ),
                 &[],
             )
-            .map_err(|e| ExampleError::Database(e))?;
+            .map_err(ExampleError::Database)?;
         Ok(())
     }
 
