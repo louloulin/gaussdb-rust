@@ -67,7 +67,10 @@ async fn connect(s: &str) -> Client {
     } else if s == "user=postgres" {
         "user=gaussdb password=Gaussdb@123 dbname=postgres".to_string()
     } else if s.starts_with("user=postgres ") {
-        s.replace("user=postgres", "user=gaussdb password=Gaussdb@123 dbname=postgres")
+        s.replace(
+            "user=postgres",
+            "user=gaussdb password=Gaussdb@123 dbname=postgres",
+        )
     } else {
         format!("{} password=Gaussdb@123 dbname=postgres", s)
     };
@@ -186,10 +189,7 @@ async fn insert_select() {
         .batch_execute("CREATE TABLE IF NOT EXISTS foo_test (id INTEGER, name TEXT)")
         .await
         .unwrap();
-    client
-        .batch_execute("DELETE FROM foo_test")
-        .await
-        .unwrap();
+    client.batch_execute("DELETE FROM foo_test").await.unwrap();
 
     let insert = client.prepare("INSERT INTO foo_test (id, name) VALUES (1, $1), (2, $2)");
     let select = client.prepare("SELECT id, name FROM foo_test ORDER BY id");
@@ -378,7 +378,10 @@ async fn simple_query() {
     assert_eq!(data_rows, 2, "Should have exactly 2 data rows");
     assert!(found_steven, "Should find 'steven' in data");
     assert!(found_joe, "Should find 'joe' in data");
-    assert!(command_completes >= 3, "Should have at least 3 command completes");
+    assert!(
+        command_completes >= 3,
+        "Should have at least 3 command completes"
+    );
     match &messages[3] {
         SimpleQueryMessage::Row(row) => {
             assert_eq!(row.columns().get(0).map(|c| c.name()), Some("id"));
@@ -447,7 +450,10 @@ async fn transaction_commit() {
         .unwrap();
     transaction.commit().await.unwrap();
 
-    let stmt = client.prepare("SELECT name FROM transaction_commit_test").await.unwrap();
+    let stmt = client
+        .prepare("SELECT name FROM transaction_commit_test")
+        .await
+        .unwrap();
     let rows = client.query(&stmt, &[]).await.unwrap();
 
     assert_eq!(rows.len(), 1);
@@ -480,7 +486,10 @@ async fn transaction_rollback() {
         .unwrap();
     transaction.rollback().await.unwrap();
 
-    let stmt = client.prepare("SELECT name FROM transaction_rollback_test").await.unwrap();
+    let stmt = client
+        .prepare("SELECT name FROM transaction_rollback_test")
+        .await
+        .unwrap();
     let rows = client.query(&stmt, &[]).await.unwrap();
 
     assert_eq!(rows.len(), 0);
@@ -586,7 +595,10 @@ async fn transaction_rollback_drop() {
         .unwrap();
     drop(transaction);
 
-    let stmt = client.prepare("SELECT name FROM transaction_rollback_drop_test").await.unwrap();
+    let stmt = client
+        .prepare("SELECT name FROM transaction_rollback_drop_test")
+        .await
+        .unwrap();
     let rows = client.query(&stmt, &[]).await.unwrap();
 
     assert_eq!(rows.len(), 0);
@@ -614,7 +626,7 @@ async fn transaction_builder() {
     let transaction = client
         .build_transaction()
         .isolation_level(IsolationLevel::Serializable)
-        .read_only(false)  // 改为false，因为需要INSERT操作
+        .read_only(false) // 改为false，因为需要INSERT操作
         .deferrable(true)
         .start()
         .await
@@ -625,7 +637,10 @@ async fn transaction_builder() {
         .unwrap();
     transaction.commit().await.unwrap();
 
-    let stmt = client.prepare("SELECT name FROM transaction_builder_test").await.unwrap();
+    let stmt = client
+        .prepare("SELECT name FROM transaction_builder_test")
+        .await
+        .unwrap();
     let rows = client.query(&stmt, &[]).await.unwrap();
 
     assert_eq!(rows.len(), 1);
@@ -751,7 +766,10 @@ async fn copy_out() {
         .await
         .unwrap();
 
-    let stmt = client.prepare("COPY copy_out_test TO STDOUT").await.unwrap();
+    let stmt = client
+        .prepare("COPY copy_out_test TO STDOUT")
+        .await
+        .unwrap();
     let data = client
         .copy_out(&stmt)
         .await
@@ -768,10 +786,12 @@ async fn copy_out() {
 #[tokio::test]
 async fn notices() {
     let long_name = "x".repeat(65);
-    let (client, mut connection) =
-        connect_raw(&format!("user=gaussdb password=Gaussdb@123 dbname=postgres application_name={}", long_name,))
-            .await
-            .unwrap();
+    let (client, mut connection) = connect_raw(&format!(
+        "user=gaussdb password=Gaussdb@123 dbname=postgres application_name={}",
+        long_name,
+    ))
+    .await
+    .unwrap();
 
     let (tx, rx) = mpsc::unbounded();
     let stream =
@@ -807,7 +827,9 @@ async fn notices() {
 
 #[tokio::test]
 async fn notifications() {
-    let (client, mut connection) = connect_raw("user=gaussdb password=Gaussdb@123 dbname=postgres").await.unwrap();
+    let (client, mut connection) = connect_raw("user=gaussdb password=Gaussdb@123 dbname=postgres")
+        .await
+        .unwrap();
 
     let (tx, rx) = mpsc::unbounded();
     let stream =

@@ -4,8 +4,8 @@
 //!
 //! Run with: cargo run --bin simple_async
 
-use tokio_gaussdb::{connect, Error, NoTls};
 use std::env;
+use tokio_gaussdb::{connect, Error, NoTls};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -40,16 +40,20 @@ async fn main() -> Result<(), Error> {
 
     // Test simple table operations
     println!("\n🏗️  Creating test table...");
-    client.execute("DROP TABLE IF EXISTS async_simple_test", &[]).await?;
-    client.execute(
-        "CREATE TABLE async_simple_test (
+    client
+        .execute("DROP TABLE IF EXISTS async_simple_test", &[])
+        .await?;
+    client
+        .execute(
+            "CREATE TABLE async_simple_test (
             id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             value INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )",
-        &[],
-    ).await?;
+            &[],
+        )
+        .await?;
     println!("   ✅ Table created");
 
     // Insert test data concurrently
@@ -84,7 +88,12 @@ async fn main() -> Result<(), Error> {
 
     // Query test data
     println!("\n📖 Querying test data...");
-    let rows = client.query("SELECT id, name, value FROM async_simple_test ORDER BY id", &[]).await?;
+    let rows = client
+        .query(
+            "SELECT id, name, value FROM async_simple_test ORDER BY id",
+            &[],
+        )
+        .await?;
     println!("   Found {} rows:", rows.len());
     for row in &rows {
         let id: i32 = row.get(0);
@@ -106,7 +115,7 @@ async fn main() -> Result<(), Error> {
             let count: i64 = count_row.get(0);
             let max_value: Option<i32> = max_row.get(0);
             let min_value: Option<i32> = min_row.get(0);
-            
+
             println!("   Statistics (queried concurrently):");
             println!("   - Total rows: {}", count);
             println!("   - Max value: {:?}", max_value);
@@ -118,15 +127,19 @@ async fn main() -> Result<(), Error> {
     // Test transaction
     println!("\n💳 Testing async transaction...");
     let transaction = client.transaction().await?;
-    transaction.execute(
-        "INSERT INTO async_simple_test (name, value) VALUES ($1, $2)",
-        &[&"transaction_test", &999],
-    ).await?;
+    transaction
+        .execute(
+            "INSERT INTO async_simple_test (name, value) VALUES ($1, $2)",
+            &[&"transaction_test", &999],
+        )
+        .await?;
     transaction.commit().await?;
     println!("   ✅ Async transaction committed");
 
     // Final count
-    let row = client.query_one("SELECT COUNT(*) FROM async_simple_test", &[]).await?;
+    let row = client
+        .query_one("SELECT COUNT(*) FROM async_simple_test", &[])
+        .await?;
     let final_count: i64 = row.get(0);
     println!("   Final row count: {}", final_count);
 
