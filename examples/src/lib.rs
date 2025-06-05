@@ -178,8 +178,7 @@ pub mod test_utils {
         use gaussdb::{Client, NoTls};
 
         let database_url = get_database_url();
-        let _client =
-            Client::connect(&database_url, NoTls).map_err(ExampleError::Database)?;
+        let _client = Client::connect(&database_url, NoTls).map_err(ExampleError::Database)?;
         Ok(())
     }
 
