@@ -3,15 +3,15 @@
 //! # Example
 //!
 //! ```no_run
-//! use tokio_postgres::{NoTls, Error};
+//! use tokio_gaussdb::{NoTls, Error};
 //!
 //! # #[cfg(not(feature = "runtime"))] fn main() {}
 //! # #[cfg(feature = "runtime")]
-//! #[tokio::main] // By default, tokio_postgres uses the tokio crate as its runtime.
+//! #[tokio::main] // By default, tokio_gaussdb uses the tokio crate as its runtime.
 //! async fn main() -> Result<(), Error> {
 //!     // Connect to the database.
 //!     let (client, connection) =
-//!         tokio_postgres::connect("host=localhost user=postgres", NoTls).await?;
+//!         tokio_gaussdb::connect("host=localhost user=gaussdb", NoTls).await?;
 //!
 //!     // The connection object performs the actual communication with the database,
 //!     // so spawn it off to run on its own.
@@ -71,7 +71,7 @@
 //! ```rust
 //! use futures_util::future;
 //! use std::future::Future;
-//! use tokio_postgres::{Client, Error, Statement};
+//! use tokio_gaussdb::{Client, Error, Statement};
 //!
 //! async fn pipelined_prepare(
 //!     client: &Client,

@@ -43,8 +43,8 @@
 //!     .build()?;
 //! let connector = MakeTlsConnector::new(connector);
 //!
-//! let client = postgres::Client::connect(
-//!     "host=localhost user=postgres sslmode=require",
+//! let client = gaussdb::Client::connect(
+//!     "host=localhost user=gaussdb sslmode=require",
 //!     connector,
 //! )?;
 //! # }

@@ -383,36 +383,39 @@ fn copy_out() {
     client.simple_query("SELECT 1").unwrap();
 }
 
-#[test]
-#[ignore] // OpenGauss binary copy format may differ from PostgreSQL
-fn binary_copy_out() {
-    let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
-        NoTls,
-    )
-    .unwrap();
-
-    client
-        .simple_query(
-            "CREATE TEMPORARY TABLE foo (id INT, name TEXT);
-             INSERT INTO foo (id, name) VALUES (1, 'steven'), (2, 'timothy');",
-        )
-        .unwrap();
-
-    let reader = client
-        .copy_out("COPY foo (id, name) TO STDOUT BINARY")
-        .unwrap();
-    let rows = BinaryCopyOutIter::new(reader, &[Type::INT4, Type::TEXT])
-        .collect::<Vec<_>>()
-        .unwrap();
-    assert_eq!(rows.len(), 2);
-    assert_eq!(rows[0].get::<i32>(0), 1);
-    assert_eq!(rows[0].get::<&str>(1), "steven");
-    assert_eq!(rows[1].get::<i32>(0), 2);
-    assert_eq!(rows[1].get::<&str>(1), "timothy");
-
-    client.simple_query("SELECT 1").unwrap();
-}
+// TODO: 注释掉测试用例 - GaussDB二进制COPY格式差异导致解析失败
+// 原因：GaussDB的二进制COPY格式与PostgreSQL存在细微差异，导致数据流解析失败
+// 影响：仅影响二进制格式COPY，文本格式COPY功能正常
+// 解决方案：使用文本格式COPY或开发GaussDB特定的二进制格式适配器
+// #[test]
+// fn binary_copy_out() {
+//     let mut client = Client::connect(
+//         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+//         NoTls,
+//     )
+//     .unwrap();
+//
+//     client
+//         .simple_query(
+//             "CREATE TEMPORARY TABLE foo (id INT, name TEXT);
+//              INSERT INTO foo (id, name) VALUES (1, 'steven'), (2, 'timothy');",
+//         )
+//         .unwrap();
+//
+//     let reader = client
+//         .copy_out("COPY foo (id, name) TO STDOUT BINARY")
+//         .unwrap();
+//     let rows = BinaryCopyOutIter::new(reader, &[Type::INT4, Type::TEXT])
+//         .collect::<Vec<_>>()
+//         .unwrap();
+//     assert_eq!(rows.len(), 2);
+//     assert_eq!(rows[0].get::<i32>(0), 1);
+//     assert_eq!(rows[0].get::<&str>(1), "steven");
+//     assert_eq!(rows[1].get::<i32>(0), 2);
+//     assert_eq!(rows[1].get::<&str>(1), "timothy");
+//
+//     client.simple_query("SELECT 1").unwrap();
+// }
 
 #[test]
 fn portal() {
@@ -467,118 +470,130 @@ fn cancel_query() {
     cancel_thread.join().unwrap();
 }
 
-#[test]
-#[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
-fn notifications_iter() {
-    let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
-        NoTls,
-    )
-    .unwrap();
+// TODO: 注释掉测试用例 - GaussDB尚未完全支持LISTEN/NOTIFY功能
+// 原因：GaussDB/OpenGauss尚未实现PostgreSQL的LISTEN/NOTIFY异步通知功能
+// 错误：ERROR: LISTEN statement is not yet supported. (SQLSTATE: 0A000)
+// 影响：仅影响实时通知功能，不影响基础数据库操作
+// 解决方案：使用轮询机制或等待GaussDB后续版本支持
+// #[test]
+// fn notifications_iter() {
+//     let mut client = Client::connect(
+//         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+//         NoTls,
+//     )
+//     .unwrap();
+//
+//     client
+//         .batch_execute(
+//             "\
+//         LISTEN notifications_iter;
+//         NOTIFY notifications_iter, 'hello';
+//         NOTIFY notifications_iter, 'world';
+//     ",
+//         )
+//         .unwrap();
+//
+//     let notifications = client.notifications().iter().collect::<Vec<_>>().unwrap();
+//     assert_eq!(notifications.len(), 2);
+//     assert_eq!(notifications[0].payload(), "hello");
+//     assert_eq!(notifications[1].payload(), "world");
+// }
 
-    client
-        .batch_execute(
-            "\
-        LISTEN notifications_iter;
-        NOTIFY notifications_iter, 'hello';
-        NOTIFY notifications_iter, 'world';
-    ",
-        )
-        .unwrap();
+// TODO: 注释掉测试用例 - GaussDB尚未完全支持LISTEN/NOTIFY功能
+// 原因：GaussDB/OpenGauss尚未实现PostgreSQL的LISTEN/NOTIFY异步通知功能
+// 错误：ERROR: LISTEN statement is not yet supported. (SQLSTATE: 0A000)
+// 影响：仅影响实时通知功能，不影响基础数据库操作
+// 解决方案：使用轮询机制或等待GaussDB后续版本支持
+// #[test]
+// fn notifications_blocking_iter() {
+//     let mut client = Client::connect(
+//         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+//         NoTls,
+//     )
+//     .unwrap();
+//
+//     client
+//         .batch_execute(
+//             "\
+//         LISTEN notifications_blocking_iter;
+//         NOTIFY notifications_blocking_iter, 'hello';
+//     ",
+//         )
+//         .unwrap();
+//
+//     thread::spawn(|| {
+//         let mut client = Client::connect(
+//             "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+//             NoTls,
+//         )
+//         .unwrap();
+//
+//         thread::sleep(Duration::from_secs(1));
+//         client
+//             .batch_execute("NOTIFY notifications_blocking_iter, 'world'")
+//             .unwrap();
+//     });
+//
+//     let notifications = client
+//         .notifications()
+//         .blocking_iter()
+//         .take(2)
+//         .collect::<Vec<_>>()
+//         .unwrap();
+//     assert_eq!(notifications.len(), 2);
+//     assert_eq!(notifications[0].payload(), "hello");
+//     assert_eq!(notifications[1].payload(), "world");
+// }
 
-    let notifications = client.notifications().iter().collect::<Vec<_>>().unwrap();
-    assert_eq!(notifications.len(), 2);
-    assert_eq!(notifications[0].payload(), "hello");
-    assert_eq!(notifications[1].payload(), "world");
-}
-
-#[test]
-#[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
-fn notifications_blocking_iter() {
-    let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
-        NoTls,
-    )
-    .unwrap();
-
-    client
-        .batch_execute(
-            "\
-        LISTEN notifications_blocking_iter;
-        NOTIFY notifications_blocking_iter, 'hello';
-    ",
-        )
-        .unwrap();
-
-    thread::spawn(|| {
-        let mut client = Client::connect(
-            "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
-            NoTls,
-        )
-        .unwrap();
-
-        thread::sleep(Duration::from_secs(1));
-        client
-            .batch_execute("NOTIFY notifications_blocking_iter, 'world'")
-            .unwrap();
-    });
-
-    let notifications = client
-        .notifications()
-        .blocking_iter()
-        .take(2)
-        .collect::<Vec<_>>()
-        .unwrap();
-    assert_eq!(notifications.len(), 2);
-    assert_eq!(notifications[0].payload(), "hello");
-    assert_eq!(notifications[1].payload(), "world");
-}
-
-#[test]
-#[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
-fn notifications_timeout_iter() {
-    let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
-        NoTls,
-    )
-    .unwrap();
-
-    client
-        .batch_execute(
-            "\
-        LISTEN notifications_timeout_iter;
-        NOTIFY notifications_timeout_iter, 'hello';
-    ",
-        )
-        .unwrap();
-
-    thread::spawn(|| {
-        let mut client = Client::connect(
-            "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
-            NoTls,
-        )
-        .unwrap();
-
-        thread::sleep(Duration::from_millis(1500)); // 稍微增加等待时间
-        client
-            .batch_execute("NOTIFY notifications_timeout_iter, 'world'")
-            .unwrap();
-
-        thread::sleep(Duration::from_secs(10));
-        client
-            .batch_execute("NOTIFY notifications_timeout_iter, '!'")
-            .unwrap();
-    });
-
-    let notifications = client
-        .notifications()
-        .timeout_iter(Duration::from_secs(5)) // 增加超时时间以适应网络延迟
-        .collect::<Vec<_>>()
-        .unwrap();
-    assert_eq!(notifications.len(), 2);
-    assert_eq!(notifications[0].payload(), "hello");
-    assert_eq!(notifications[1].payload(), "world");
-}
+// TODO: 注释掉测试用例 - GaussDB尚未完全支持LISTEN/NOTIFY功能
+// 原因：GaussDB/OpenGauss尚未实现PostgreSQL的LISTEN/NOTIFY异步通知功能
+// 错误：ERROR: LISTEN statement is not yet supported. (SQLSTATE: 0A000)
+// 影响：仅影响实时通知功能，不影响基础数据库操作
+// 解决方案：使用轮询机制或等待GaussDB后续版本支持
+// #[test]
+// fn notifications_timeout_iter() {
+//     let mut client = Client::connect(
+//         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+//         NoTls,
+//     )
+//     .unwrap();
+//
+//     client
+//         .batch_execute(
+//             "\
+//         LISTEN notifications_timeout_iter;
+//         NOTIFY notifications_timeout_iter, 'hello';
+//     ",
+//         )
+//         .unwrap();
+//
+//     thread::spawn(|| {
+//         let mut client = Client::connect(
+//             "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+//             NoTls,
+//         )
+//         .unwrap();
+//
+//         thread::sleep(Duration::from_millis(1500)); // 稍微增加等待时间
+//         client
+//             .batch_execute("NOTIFY notifications_timeout_iter, 'world'")
+//             .unwrap();
+//
+//         thread::sleep(Duration::from_secs(10));
+//         client
+//             .batch_execute("NOTIFY notifications_timeout_iter, '!'")
+//             .unwrap();
+//     });
+//
+//     let notifications = client
+//         .notifications()
+//         .timeout_iter(Duration::from_secs(5)) // 增加超时时间以适应网络延迟
+//         .collect::<Vec<_>>()
+//         .unwrap();
+//     assert_eq!(notifications.len(), 2);
+//     assert_eq!(notifications[0].payload(), "hello");
+//     assert_eq!(notifications[1].payload(), "world");
+// }
 
 #[test]
 fn notice_callback() {

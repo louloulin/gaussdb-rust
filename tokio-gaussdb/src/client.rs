@@ -335,7 +335,7 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// # async fn async_main(client: &tokio_postgres::Client) -> Result<(), tokio_postgres::Error> {
+    /// # async fn async_main(client: &tokio_gaussdb::Client) -> Result<(), tokio_gaussdb::Error> {
     /// use futures_util::{pin_mut, TryStreamExt};
     ///
     /// let params: Vec<String> = vec![
@@ -401,9 +401,9 @@ impl Client {
     /// # Examples
     ///
     /// ```no_run
-    /// # async fn async_main(client: &tokio_postgres::Client) -> Result<(), tokio_postgres::Error> {
+    /// # async fn async_main(client: &tokio_gaussdb::Client) -> Result<(), tokio_gaussdb::Error> {
     /// use futures_util::{pin_mut, TryStreamExt};
-    /// use tokio_postgres::types::Type;
+    /// use tokio_gaussdb::types::Type;
     ///
     /// let params: Vec<(String, Type)> = vec![
     ///     ("first param".into(), Type::TEXT),
