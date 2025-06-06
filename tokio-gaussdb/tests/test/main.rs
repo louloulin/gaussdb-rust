@@ -321,96 +321,97 @@ async fn custom_range() {
     assert_eq!(&Kind::Range(Type::FLOAT8), ty.kind());
 }
 
-// TODO: 注释掉测试用例 - GaussDB简单查询消息格式差异
-// 原因：GaussDB的简单查询响应消息格式与PostgreSQL略有不同，消息数量或顺序存在差异
-// 错误：thread 'simple_query' panicked at: unexpected message
-// 影响：仅影响对消息格式严格验证的测试，实际查询功能完全正常
-// 解决方案：开发更灵活的消息验证逻辑，适应GaussDB的消息格式
-// #[tokio::test]
-// #[allow(clippy::get_first)]
-// async fn simple_query() {
-//     let client = connect("user=postgres").await;
-//
-//     let messages = client
-//         .simple_query(
-//             "CREATE TABLE IF NOT EXISTS simple_query_test (
-//                 id INTEGER,
-//                 name TEXT
-//             );
-//             DELETE FROM simple_query_test;
-//             INSERT INTO simple_query_test (id, name) VALUES (1, 'steven'), (2, 'joe');
-//             SELECT * FROM simple_query_test ORDER BY id;",
-//         )
-//         .await
-//         .unwrap();
-//
-//     // 更加灵活的验证，适应不同的GaussDB响应
-//     assert!(messages.len() >= 4, "Should have at least 4 messages");
-//
-//     // 查找关键消息类型
-//     let mut found_row_description = false;
-//     let mut data_rows = 0;
-//     let mut command_completes = 0;
-//     let mut found_steven = false;
-//     let mut found_joe = false;
-//
-//     for message in &messages {
-//         match message {
-//             SimpleQueryMessage::CommandComplete(_) => {
-//                 command_completes += 1;
-//             }
-//             SimpleQueryMessage::RowDescription(columns) => {
-//                 found_row_description = true;
-//                 assert_eq!(columns.get(0).map(|c| c.name()), Some("id"));
-//                 assert_eq!(columns.get(1).map(|c| c.name()), Some("name"));
-//             }
-//             SimpleQueryMessage::Row(row) => {
-//                 data_rows += 1;
-//                 // 验证数据存在并检查内容
-//                 if let Some(name) = row.get("name") {
-//                     if name == "steven" {
-//                         found_steven = true;
-//                     } else if name == "joe" {
-//                         found_joe = true;
-//                     }
-//                 }
-//             }
-//             _ => {}
-//         }
-//     }
-//
-//     assert!(found_row_description, "Should have row description");
-//     assert_eq!(data_rows, 2, "Should have exactly 2 data rows");
-//     assert!(found_steven, "Should find 'steven' in data");
-//     assert!(found_joe, "Should find 'joe' in data");
-//     assert!(
-//         command_completes >= 3,
-//         "Should have at least 3 command completes"
-//     );
-//     match &messages[3] {
-//         SimpleQueryMessage::Row(row) => {
-//             assert_eq!(row.columns().get(0).map(|c| c.name()), Some("id"));
-//             assert_eq!(row.columns().get(1).map(|c| c.name()), Some("name"));
-//             assert_eq!(row.get(0), Some("1"));
-//             assert_eq!(row.get(1), Some("steven"));
-//         }
-//         _ => panic!("unexpected message"),
-//     }
-//     match &messages[4] {
-//         SimpleQueryMessage::Row(row) => {
-//             assert_eq!(row.columns().get(0).map(|c| c.name()), Some("id"));
-//             assert_eq!(row.columns().get(1).map(|c| c.name()), Some("name"));
-//             assert_eq!(row.get(0), Some("2"));
-//             assert_eq!(row.get(1), Some("joe"));
-//         }
-//         _ => panic!("unexpected message"),
-//     }
-//     match messages[5] {
-//         SimpleQueryMessage::CommandComplete(2) => {}
-//         _ => panic!("unexpected message"),
-//     }
-//     assert_eq!(messages.len(), 6);
-// }
+#[tokio::test]
+#[ignore] // GaussDB simple query message format differences
+#[allow(clippy::get_first)]
+async fn simple_query() {
+    // TODO: GaussDB简单查询消息格式差异
+    // 原因：GaussDB的简单查询响应消息格式与PostgreSQL略有不同，消息数量或顺序存在差异
+    // 错误：thread 'simple_query' panicked at: unexpected message
+    // 影响：仅影响对消息格式严格验证的测试，实际查询功能完全正常
+    // 解决方案：开发更灵活的消息验证逻辑，适应GaussDB的消息格式
+    let client = connect("user=postgres").await;
+
+    let messages = client
+        .simple_query(
+            "CREATE TABLE IF NOT EXISTS simple_query_test (
+                id INTEGER,
+                name TEXT
+            );
+            DELETE FROM simple_query_test;
+            INSERT INTO simple_query_test (id, name) VALUES (1, 'steven'), (2, 'joe');
+            SELECT * FROM simple_query_test ORDER BY id;",
+        )
+        .await
+        .unwrap();
+
+    // 更加灵活的验证，适应不同的GaussDB响应
+    assert!(messages.len() >= 4, "Should have at least 4 messages");
+
+    // 查找关键消息类型
+    let mut found_row_description = false;
+    let mut data_rows = 0;
+    let mut command_completes = 0;
+    let mut found_steven = false;
+    let mut found_joe = false;
+
+    for message in &messages {
+        match message {
+            SimpleQueryMessage::CommandComplete(_) => {
+                command_completes += 1;
+            }
+            SimpleQueryMessage::RowDescription(columns) => {
+                found_row_description = true;
+                assert_eq!(columns.get(0).map(|c| c.name()), Some("id"));
+                assert_eq!(columns.get(1).map(|c| c.name()), Some("name"));
+            }
+            SimpleQueryMessage::Row(row) => {
+                data_rows += 1;
+                // 验证数据存在并检查内容
+                if let Some(name) = row.get("name") {
+                    if name == "steven" {
+                        found_steven = true;
+                    } else if name == "joe" {
+                        found_joe = true;
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    assert!(found_row_description, "Should have row description");
+    assert_eq!(data_rows, 2, "Should have exactly 2 data rows");
+    assert!(found_steven, "Should find 'steven' in data");
+    assert!(found_joe, "Should find 'joe' in data");
+    assert!(
+        command_completes >= 3,
+        "Should have at least 3 command completes"
+    );
+    match &messages[3] {
+        SimpleQueryMessage::Row(row) => {
+            assert_eq!(row.columns().get(0).map(|c| c.name()), Some("id"));
+            assert_eq!(row.columns().get(1).map(|c| c.name()), Some("name"));
+            assert_eq!(row.get(0), Some("1"));
+            assert_eq!(row.get(1), Some("steven"));
+        }
+        _ => panic!("unexpected message"),
+    }
+    match &messages[4] {
+        SimpleQueryMessage::Row(row) => {
+            assert_eq!(row.columns().get(0).map(|c| c.name()), Some("id"));
+            assert_eq!(row.columns().get(1).map(|c| c.name()), Some("name"));
+            assert_eq!(row.get(0), Some("2"));
+            assert_eq!(row.get(1), Some("joe"));
+        }
+        _ => panic!("unexpected message"),
+    }
+    match messages[5] {
+        SimpleQueryMessage::CommandComplete(2) => {}
+        _ => panic!("unexpected message"),
+    }
+    assert_eq!(messages.len(), 6);
+}
 
 #[tokio::test]
 async fn cancel_query_raw() {
@@ -830,47 +831,48 @@ async fn notices() {
     );
 }
 
-// TODO: 注释掉测试用例 - GaussDB尚未完全支持LISTEN/NOTIFY功能
-// 原因：GaussDB/OpenGauss尚未实现PostgreSQL的LISTEN/NOTIFY异步通知功能
-// 错误：Error { kind: Db, cause: Some(DbError { severity: "ERROR", code: SqlState(E0A000), message: "LISTEN statement is not yet supported." }) }
-// 影响：仅影响实时通知功能，不影响基础数据库操作
-// 解决方案：使用轮询机制或等待GaussDB后续版本支持
-// #[tokio::test]
-// async fn notifications() {
-//     let (client, mut connection) = connect_raw("user=gaussdb password=Gaussdb@123 dbname=postgres")
-//         .await
-//         .unwrap();
-//
-//     let (tx, rx) = mpsc::unbounded();
-//     let stream =
-//         stream::poll_fn(move |cx| connection.poll_message(cx)).map_err(|e| panic!("{}", e));
-//     let connection = stream.forward(tx).map(|r| r.unwrap());
-//     tokio::spawn(connection);
-//
-//     client
-//         .batch_execute(
-//             "LISTEN test_notifications;
-//              NOTIFY test_notifications, 'hello';
-//              NOTIFY test_notifications, 'world';",
-//         )
-//         .await
-//         .unwrap();
-//
-//     drop(client);
-//
-//     let notifications = rx
-//         .filter_map(|m| match m {
-//             AsyncMessage::Notification(n) => future::ready(Some(n)),
-//             _ => future::ready(None),
-//         })
-//         .collect::<Vec<_>>()
-//         .await;
-//     assert_eq!(notifications.len(), 2);
-//     assert_eq!(notifications[0].channel(), "test_notifications");
-//     assert_eq!(notifications[0].payload(), "hello");
-//     assert_eq!(notifications[1].channel(), "test_notifications");
-//     assert_eq!(notifications[1].payload(), "world");
-// }
+#[tokio::test]
+#[ignore] // GaussDB doesn't fully support LISTEN/NOTIFY functionality yet
+async fn notifications() {
+    // TODO: GaussDB尚未完全支持LISTEN/NOTIFY功能
+    // 原因：GaussDB/OpenGauss尚未实现PostgreSQL的LISTEN/NOTIFY异步通知功能
+    // 错误：Error { kind: Db, cause: Some(DbError { severity: "ERROR", code: SqlState(E0A000), message: "LISTEN statement is not yet supported." }) }
+    // 影响：仅影响实时通知功能，不影响基础数据库操作
+    // 解决方案：使用轮询机制或等待GaussDB后续版本支持
+    let (client, mut connection) = connect_raw("user=gaussdb password=Gaussdb@123 dbname=postgres")
+        .await
+        .unwrap();
+
+    let (tx, rx) = mpsc::unbounded();
+    let stream =
+        stream::poll_fn(move |cx| connection.poll_message(cx)).map_err(|e| panic!("{}", e));
+    let connection = stream.forward(tx).map(|r| r.unwrap());
+    tokio::spawn(connection);
+
+    client
+        .batch_execute(
+            "LISTEN test_notifications;
+             NOTIFY test_notifications, 'hello';
+             NOTIFY test_notifications, 'world';",
+        )
+        .await
+        .unwrap();
+
+    drop(client);
+
+    let notifications = rx
+        .filter_map(|m| match m {
+            AsyncMessage::Notification(n) => future::ready(Some(n)),
+            _ => future::ready(None),
+        })
+        .collect::<Vec<_>>()
+        .await;
+    assert_eq!(notifications.len(), 2);
+    assert_eq!(notifications[0].channel(), "test_notifications");
+    assert_eq!(notifications[0].payload(), "hello");
+    assert_eq!(notifications[1].channel(), "test_notifications");
+    assert_eq!(notifications[1].payload(), "world");
+}
 
 #[tokio::test]
 async fn query_portal() {
