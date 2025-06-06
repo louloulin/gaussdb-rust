@@ -146,21 +146,18 @@ async fn test_i64_params() {
     .await;
 }
 
-// TODO: 删除测试用例 - GaussDB不支持PostgreSQL的pg_lsn类型
-// 原因：pg_lsn是PostgreSQL特有的WAL日志序列号类型，GaussDB不支持
-// 错误：ERROR: type "pg_lsn" does not exist (SQLSTATE: 42704)
-// 影响：仅影响使用WAL相关功能的应用，不影响核心数据库操作
-// #[tokio::test]
-// async fn test_lsn_params() {
-//     test_type(
-//         "PG_LSN",
-//         &[
-//             (Some(PgLsn::from_str("2B/1757980").unwrap()), "'2B/1757980'"),
-//             (None, "NULL"),
-//         ],
-//     )
-//     .await
-// }
+#[tokio::test]
+#[ignore] // GaussDB doesn't support PostgreSQL's pg_lsn type
+async fn test_lsn_params() {
+    test_type(
+        "PG_LSN",
+        &[
+            (Some(PgLsn::from_str("2B/1757980").unwrap()), "'2B/1757980'"),
+            (None, "NULL"),
+        ],
+    )
+    .await
+}
 
 #[tokio::test]
 async fn test_f32_params() {
