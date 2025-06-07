@@ -7,6 +7,8 @@ use crate::Client;
 use log::info;
 use std::fmt;
 use std::net::IpAddr;
+#[cfg(unix)]
+use std::path::Path;
 
 use std::str::FromStr;
 use std::sync::Arc;

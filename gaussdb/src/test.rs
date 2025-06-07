@@ -384,8 +384,12 @@ fn copy_out() {
 }
 
 #[test]
-#[ignore] // OpenGauss binary copy format may differ from PostgreSQL
+#[ignore] // GaussDB binary COPY format differences cause parsing failures
 fn binary_copy_out() {
+    // TODO: GaussDB二进制COPY格式差异导致解析失败
+    // 原因：GaussDB的二进制COPY格式与PostgreSQL存在细微差异，导致数据流解析失败
+    // 影响：仅影响二进制格式COPY，文本格式COPY功能正常
+    // 解决方案：使用文本格式COPY或开发GaussDB特定的二进制格式适配器
     let mut client = Client::connect(
         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
         NoTls,
@@ -468,8 +472,13 @@ fn cancel_query() {
 }
 
 #[test]
-#[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
+#[ignore] // GaussDB doesn't fully support LISTEN/NOTIFY functionality yet
 fn notifications_iter() {
+    // TODO: GaussDB尚未完全支持LISTEN/NOTIFY功能
+    // 原因：GaussDB/OpenGauss尚未实现PostgreSQL的LISTEN/NOTIFY异步通知功能
+    // 错误：ERROR: LISTEN statement is not yet supported. (SQLSTATE: 0A000)
+    // 影响：仅影响实时通知功能，不影响基础数据库操作
+    // 解决方案：使用轮询机制或等待GaussDB后续版本支持
     let mut client = Client::connect(
         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
         NoTls,
@@ -493,8 +502,13 @@ fn notifications_iter() {
 }
 
 #[test]
-#[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
+#[ignore] // GaussDB doesn't fully support LISTEN/NOTIFY functionality yet
 fn notifications_blocking_iter() {
+    // TODO: GaussDB尚未完全支持LISTEN/NOTIFY功能
+    // 原因：GaussDB/OpenGauss尚未实现PostgreSQL的LISTEN/NOTIFY异步通知功能
+    // 错误：ERROR: LISTEN statement is not yet supported. (SQLSTATE: 0A000)
+    // 影响：仅影响实时通知功能，不影响基础数据库操作
+    // 解决方案：使用轮询机制或等待GaussDB后续版本支持
     let mut client = Client::connect(
         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
         NoTls,
@@ -535,8 +549,13 @@ fn notifications_blocking_iter() {
 }
 
 #[test]
-#[ignore] // OpenGauss doesn't support LISTEN/NOTIFY yet
+#[ignore] // GaussDB doesn't fully support LISTEN/NOTIFY functionality yet
 fn notifications_timeout_iter() {
+    // TODO: GaussDB尚未完全支持LISTEN/NOTIFY功能
+    // 原因：GaussDB/OpenGauss尚未实现PostgreSQL的LISTEN/NOTIFY异步通知功能
+    // 错误：ERROR: LISTEN statement is not yet supported. (SQLSTATE: 0A000)
+    // 影响：仅影响实时通知功能，不影响基础数据库操作
+    // 解决方案：使用轮询机制或等待GaussDB后续版本支持
     let mut client = Client::connect(
         "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
         NoTls,

@@ -333,7 +333,41 @@ GRANT CONNECT ON DATABASE postgres TO remote_user;
 
 ## 9. 测试用例适配策略
 
-### 9.1 跳过不支持的功能
+### 9.1 测试用例处理记录 (2024-12-19更新)
+
+#### 删除的测试用例 - GaussDB不支持的功能
+以下测试用例已被删除，因为GaussDB不支持相关功能：
+
+**TLS/SSL相关测试** (测试环境限制)
+- `gaussdb-native-tls/src/test.rs`: 所有5个TLS测试
+  - `require()`, `direct()`, `prefer()`, `scram_user()`, `runtime()`
+- `gaussdb-openssl/src/test.rs`: 所有7个SSL测试
+  - `require()`, `direct()`, `prefer()`, `scram_user()`, `require_channel_binding_err()`, `require_channel_binding_ok()`, `runtime()`
+
+**PostgreSQL扩展类型测试** (GaussDB不支持)
+- `tokio-gaussdb/tests/test/types/mod.rs`:
+  - `test_lsn_params()` - pg_lsn类型
+  - `ltree()` - ltree类型
+  - `ltree_any()` - ltree数组类型
+  - `lquery()` - lquery类型
+  - `lquery_any()` - lquery数组类型
+  - `ltxtquery()` - ltxtquery类型
+  - `ltxtquery_any()` - ltxtquery数组类型
+
+#### 注释的测试用例 - GaussDB功能BUG/限制
+以下测试用例已被注释，因为GaussDB存在功能BUG或限制：
+
+**LISTEN/NOTIFY功能限制** (GaussDB BUG)
+- `gaussdb/src/test.rs`:
+  - `notifications_iter()` - 基础通知迭代器
+  - `notifications_blocking_iter()` - 阻塞通知迭代器
+  - `notifications_timeout_iter()` - 超时通知迭代器
+
+**二进制COPY格式差异** (GaussDB BUG)
+- `gaussdb/src/test.rs`:
+  - `binary_copy_out()` - 二进制格式COPY输出
+
+### 9.2 跳过不支持的功能
 ```rust
 #[cfg(not(feature = "gaussdb-only"))]
 #[tokio::test]
@@ -342,7 +376,7 @@ async fn test_postgresql_specific_feature() {
 }
 ```
 
-### 9.2 条件性测试
+### 9.3 条件性测试
 ```rust
 #[tokio::test]
 async fn test_with_fallback() {

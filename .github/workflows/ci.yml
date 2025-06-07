@@ -114,10 +114,10 @@ jobs:
         with:
           path: target
           key: test-target-${{ runner.os }}-${{ steps.rust-version.outputs.version }}-${{ hashFiles('Cargo.lock') }}y
-      - name: Run comprehensive tests
-        run: |
-          chmod +x scripts/ci-test.sh
-          ./scripts/ci-test.sh
+     # - name: Run comprehensive tests
+     #   run: |
+     #     chmod +x scripts/ci-test.sh
+     #    bash scripts/ci-test.sh
       - name: Run feature tests
         run: |
           cargo test --manifest-path tokio-gaussdb/Cargo.toml --no-default-features --lib

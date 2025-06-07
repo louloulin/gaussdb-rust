@@ -147,6 +147,7 @@ async fn test_i64_params() {
 }
 
 #[tokio::test]
+#[ignore] // GaussDB doesn't support PostgreSQL's pg_lsn type
 async fn test_lsn_params() {
     test_type(
         "PG_LSN",
@@ -664,7 +665,12 @@ async fn inet() {
 }
 
 #[tokio::test]
+#[ignore] // GaussDB doesn't support PostgreSQL's ltree extension type
 async fn ltree() {
+    // TODO: GaussDB不支持PostgreSQL的ltree扩展类型
+    // 原因：ltree是PostgreSQL的扩展类型，用于标签树数据结构，GaussDB不包含此扩展
+    // 错误：ERROR: type "ltree" does not exist (SQLSTATE: 42704)
+    // 影响：仅影响使用ltree扩展的应用，不影响核心数据库操作
     test_type(
         "ltree",
         &[(Some("b.c.d".to_owned()), "'b.c.d'"), (None, "NULL")],
@@ -673,7 +679,12 @@ async fn ltree() {
 }
 
 #[tokio::test]
+#[ignore] // GaussDB doesn't support PostgreSQL's ltree extension type
 async fn ltree_any() {
+    // TODO: GaussDB不支持PostgreSQL的ltree扩展类型
+    // 原因：ltree是PostgreSQL的扩展类型，用于标签树数据结构，GaussDB不包含此扩展
+    // 错误：ERROR: type "ltree" does not exist (SQLSTATE: 42704)
+    // 影响：仅影响使用ltree扩展的应用，不影响核心数据库操作
     test_type(
         "ltree[]",
         &[
@@ -690,7 +701,12 @@ async fn ltree_any() {
 }
 
 #[tokio::test]
+#[ignore] // GaussDB doesn't support PostgreSQL's lquery extension type
 async fn lquery() {
+    // TODO: GaussDB不支持PostgreSQL的lquery扩展类型
+    // 原因：lquery是PostgreSQL的ltree扩展的查询类型，GaussDB不包含此扩展
+    // 错误：ERROR: type "lquery" does not exist (SQLSTATE: 42704)
+    // 影响：仅影响使用ltree扩展的应用，不影响核心数据库操作
     test_type(
         "lquery",
         &[
@@ -704,7 +720,12 @@ async fn lquery() {
 }
 
 #[tokio::test]
+#[ignore] // GaussDB doesn't support PostgreSQL's lquery extension type
 async fn lquery_any() {
+    // TODO: GaussDB不支持PostgreSQL的lquery扩展类型
+    // 原因：lquery是PostgreSQL的ltree扩展的查询类型，GaussDB不包含此扩展
+    // 错误：ERROR: type "lquery" does not exist (SQLSTATE: 42704)
+    // 影响：仅影响使用ltree扩展的应用，不影响核心数据库操作
     test_type(
         "lquery[]",
         &[
@@ -721,7 +742,12 @@ async fn lquery_any() {
 }
 
 #[tokio::test]
+#[ignore] // GaussDB doesn't support PostgreSQL's ltxtquery extension type
 async fn ltxtquery() {
+    // TODO: GaussDB不支持PostgreSQL的ltxtquery扩展类型
+    // 原因：ltxtquery是PostgreSQL的ltree扩展的文本查询类型，GaussDB不包含此扩展
+    // 错误：ERROR: type "ltxtquery" does not exist (SQLSTATE: 42704)
+    // 影响：仅影响使用ltree扩展的应用，不影响核心数据库操作
     test_type(
         "ltxtquery",
         &[
@@ -734,7 +760,12 @@ async fn ltxtquery() {
 }
 
 #[tokio::test]
+#[ignore] // GaussDB doesn't support PostgreSQL's ltxtquery extension type
 async fn ltxtquery_any() {
+    // TODO: GaussDB不支持PostgreSQL的ltxtquery扩展类型
+    // 原因：ltxtquery是PostgreSQL的ltree扩展的文本查询类型，GaussDB不包含此扩展
+    // 错误：ERROR: type "ltxtquery" does not exist (SQLSTATE: 42704)
+    // 影响：仅影响使用ltree扩展的应用，不影响核心数据库操作
     test_type(
         "ltxtquery[]",
         &[

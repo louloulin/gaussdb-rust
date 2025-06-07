@@ -35,8 +35,8 @@
 //! builder.set_ca_file("database_cert.pem")?;
 //! let connector = MakeTlsConnector::new(builder.build());
 //!
-//! let client = postgres::Client::connect(
-//!     "host=localhost user=postgres sslmode=require",
+//! let client = gaussdb::Client::connect(
+//!     "host=localhost user=gaussdb sslmode=require",
 //!     connector,
 //! )?;
 //! # }

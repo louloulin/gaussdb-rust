@@ -61,7 +61,7 @@ pub mod common {
         let user = env::var("GAUSSDB_USER").unwrap_or_else(|_| "gaussdb".to_string());
         let password = env::var("GAUSSDB_PASSWORD").unwrap_or_else(|_| "Gaussdb@123".to_string());
         let database = env::var("GAUSSDB_DATABASE").unwrap_or_else(|_| "postgres".to_string());
-        
+
         (host, port, user, password, database)
     }
 
@@ -91,7 +91,7 @@ pub mod common {
     pub fn print_header(title: &str) {
         let width = title.len() + 4;
         let border = "=".repeat(width);
-        
+
         println!("\n{}", border);
         println!("  {}  ", title);
         println!("{}", border);
@@ -101,7 +101,7 @@ pub mod common {
     pub fn print_section(title: &str) {
         let width = title.len() + 2;
         let border = "-".repeat(width);
-        
+
         println!("\n{}", title);
         println!("{}", border);
     }
@@ -178,25 +178,24 @@ pub mod test_utils {
         use gaussdb::{Client, NoTls};
 
         let database_url = get_database_url();
-        let _client = Client::connect(&database_url, NoTls)
-            .map_err(|e| ExampleError::Database(e))?;
+        let _client = Client::connect(&database_url, NoTls).map_err(ExampleError::Database)?;
         Ok(())
     }
 
     /// Test async database connection
     pub async fn test_async_connection() -> ExampleResult<()> {
         use tokio_gaussdb::{connect, NoTls};
-        
+
         let database_url = get_database_url();
         let (_client, connection) = connect(&database_url, NoTls).await?;
-        
+
         // Spawn connection task
         let connection_handle = tokio::spawn(async move {
             if let Err(e) = connection.await {
                 eprintln!("Connection error: {}", e);
             }
         });
-        
+
         // Clean up
         connection_handle.await.unwrap();
         Ok(())
@@ -204,47 +203,63 @@ pub mod test_utils {
 
     /// Create test table for examples
     pub fn create_test_table(client: &mut gaussdb::Client, table_name: &str) -> ExampleResult<()> {
-        client.execute(&format!("DROP TABLE IF EXISTS {}", table_name), &[])
-            .map_err(|e| ExampleError::Database(e))?;
-        client.execute(&format!(
-            "CREATE TABLE {} (
+        client
+            .execute(&format!("DROP TABLE IF EXISTS {}", table_name), &[])
+            .map_err(ExampleError::Database)?;
+        client
+            .execute(
+                &format!(
+                    "CREATE TABLE {} (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 value INTEGER,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )", table_name), &[])
-            .map_err(|e| ExampleError::Database(e))?;
+            )",
+                    table_name
+                ),
+                &[],
+            )
+            .map_err(ExampleError::Database)?;
         Ok(())
     }
 
     /// Create test table for async examples
     pub async fn create_async_test_table(
         client: &tokio_gaussdb::Client,
-        table_name: &str
+        table_name: &str,
     ) -> ExampleResult<()> {
-        client.execute(&format!("DROP TABLE IF EXISTS {}", table_name), &[]).await?;
-        client.execute(&format!(
-            "CREATE TABLE {} (
+        client
+            .execute(&format!("DROP TABLE IF EXISTS {}", table_name), &[])
+            .await?;
+        client
+            .execute(
+                &format!(
+                    "CREATE TABLE {} (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 value INTEGER,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )", table_name), &[]).await?;
+            )",
+                    table_name
+                ),
+                &[],
+            )
+            .await?;
         Ok(())
     }
 }
 
 // Re-export commonly used types
 pub use gaussdb::{Client as SyncClient, Error as SyncError, NoTls};
-pub use tokio_gaussdb::{Client as AsyncClient, Error as AsyncError, connect};
+pub use tokio_gaussdb::{connect, Client as AsyncClient, Error as AsyncError};
 
 // Re-export example modules (these will be binary targets)
 // The actual example code is in separate binary files
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::test_utils::*;
+    use super::*;
 
     #[test]
     fn test_mask_password() {

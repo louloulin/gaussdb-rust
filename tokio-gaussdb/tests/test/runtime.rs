@@ -33,7 +33,10 @@ async fn tcp() {
 
 #[tokio::test]
 async fn multiple_hosts_one_port() {
-    smoke_test("host=foobar.invalid,localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres").await;
+    smoke_test(
+        "host=foobar.invalid,localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+    )
+    .await;
 }
 
 #[tokio::test]
@@ -43,10 +46,13 @@ async fn multiple_hosts_multiple_ports() {
 
 #[tokio::test]
 async fn wrong_port_count() {
-    tokio_gaussdb::connect("host=localhost port=5433,5433 user=gaussdb password=Gaussdb@123 dbname=postgres", NoTls)
-        .await
-        .err()
-        .unwrap();
+    tokio_gaussdb::connect(
+        "host=localhost port=5433,5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        NoTls,
+    )
+    .await
+    .err()
+    .unwrap();
 }
 
 #[tokio::test]
@@ -120,7 +126,8 @@ async fn hostaddr_host_both_missing() {
 
 #[tokio::test]
 async fn cancel_query() {
-    let client = connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres").await;
+    let client =
+        connect("host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres").await;
 
     let cancel_token = client.cancel_token();
     let cancel = cancel_token.cancel_query(NoTls);
