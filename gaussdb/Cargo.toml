@@ -48,4 +48,4 @@ tokio-gaussdb = { version = "0.1.0", path = "../tokio-gaussdb" }
 tokio = { version = "1.0", features = ["rt", "time"] }
 
 [dev-dependencies]
-criterion = "0.6"
+criterion = "0.7"
