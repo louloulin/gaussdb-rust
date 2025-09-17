@@ -6,6 +6,7 @@ use sha1::Sha1;
 use sha2::Sha256;
 
 pub mod sasl;
+pub mod gaussdb_sasl;
 
 /// Hashes authentication information in a way suitable for use in response
 /// to an `AuthenticationMd5Password` message.
