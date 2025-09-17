@@ -14,5 +14,4 @@ scripts/*.bat
 *.tmp
 *.log
 
-# 源码参考目录
 source/
