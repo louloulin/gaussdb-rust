@@ -11,6 +11,8 @@ use futures_util::{ready, Sink, SinkExt, Stream, TryStreamExt};
 use gaussdb_protocol::authentication;
 use gaussdb_protocol::authentication::sasl;
 use gaussdb_protocol::authentication::sasl::ScramSha256;
+use gaussdb_protocol::authentication::gaussdb_sasl::CompatibilityMode;
+use crate::adaptive_auth::create_gaussdb_scram;
 use gaussdb_protocol::message::backend::{AuthenticationSaslBody, Message};
 use gaussdb_protocol::message::frontend;
 use std::borrow::Cow;
@@ -281,6 +283,16 @@ where
         .as_ref()
         .ok_or_else(|| Error::config("password missing".into()))?;
 
+    // 首先尝试使用增强的 GaussDB 兼容 SASL 认证
+    match authenticate_sasl_enhanced(stream, &body, config, password).await {
+        Ok(()) => return Ok(()),
+        Err(e) => {
+            // 如果增强认证失败，记录错误并尝试标准认证
+            eprintln!("GaussDB 兼容 SASL 认证失败，尝试标准认证: {}", e);
+        }
+    }
+
+    // 回退到标准 SASL 认证
     let mut has_scram = false;
     let mut has_scram_plus = false;
     let mut mechanisms = body.mechanisms();
@@ -319,6 +331,108 @@ where
     }
 
     let mut scram = ScramSha256::new(password, channel_binding);
+
+    let mut buf = BytesMut::new();
+    frontend::sasl_initial_response(mechanism, scram.message(), &mut buf).map_err(Error::encode)?;
+    stream
+        .send(FrontendMessage::Raw(buf.freeze()))
+        .await
+        .map_err(Error::io)?;
+
+    let body = match stream.try_next().await.map_err(Error::io)? {
+        Some(Message::AuthenticationSaslContinue(body)) => body,
+        Some(Message::ErrorResponse(body)) => return Err(Error::db(body)),
+        Some(_) => return Err(Error::unexpected_message()),
+        None => return Err(Error::closed()),
+    };
+
+    scram
+        .update(body.data())
+        .map_err(|e| Error::authentication(e.into()))?;
+
+    let mut buf = BytesMut::new();
+    frontend::sasl_response(scram.message(), &mut buf).map_err(Error::encode)?;
+    stream
+        .send(FrontendMessage::Raw(buf.freeze()))
+        .await
+        .map_err(Error::io)?;
+
+    let body = match stream.try_next().await.map_err(Error::io)? {
+        Some(Message::AuthenticationSaslFinal(body)) => body,
+        Some(Message::ErrorResponse(body)) => return Err(Error::db(body)),
+        Some(_) => return Err(Error::unexpected_message()),
+        None => return Err(Error::closed()),
+    };
+
+    scram
+        .finish(body.data())
+        .map_err(|e| Error::authentication(e.into()))?;
+
+    Ok(())
+}
+
+/// 增强的 GaussDB 兼容 SASL 认证函数
+async fn authenticate_sasl_enhanced<S, T>(
+    stream: &mut StartupStream<S, T>,
+    body: &AuthenticationSaslBody,
+    config: &Config,
+    password: &[u8],
+) -> Result<(), Error>
+where
+    S: AsyncRead + AsyncWrite + Unpin,
+    T: TlsStream + Unpin,
+{
+    let mut has_scram = false;
+    let mut has_scram_plus = false;
+    let mut mechanisms = body.mechanisms();
+
+    // 检查支持的 SASL 机制
+    while let Some(mechanism) = mechanisms.next().map_err(Error::parse)? {
+        match mechanism {
+            sasl::SCRAM_SHA_256 => has_scram = true,
+            sasl::SCRAM_SHA_256_PLUS => has_scram_plus = true,
+            _ => {}
+        }
+    }
+
+    if !has_scram && !has_scram_plus {
+        return Err(Error::authentication("no supported SASL mechanisms".into()));
+    }
+
+    let channel_binding = stream
+        .inner
+        .get_ref()
+        .channel_binding()
+        .tls_server_end_point
+        .filter(|_| config.channel_binding != config::ChannelBinding::Disable)
+        .map(sasl::ChannelBinding::tls_server_end_point);
+
+    let (channel_binding, use_plus) = if has_scram_plus {
+        match channel_binding {
+            Some(channel_binding) => (channel_binding, true),
+            None => (sasl::ChannelBinding::unsupported(), false),
+        }
+    } else if has_scram {
+        match channel_binding {
+            Some(_) => (sasl::ChannelBinding::unrequested(), false),
+            None => (sasl::ChannelBinding::unsupported(), false),
+        }
+    } else {
+        return Err(Error::authentication("unsupported SASL mechanism".into()));
+    };
+
+    if !use_plus {
+        can_skip_channel_binding(config)?;
+    }
+
+    // 使用 GaussDB 兼容的 SCRAM 实现，首先尝试自动检测模式
+    let mut scram = create_gaussdb_scram(password, channel_binding, CompatibilityMode::Auto);
+
+    let mechanism = if use_plus {
+        sasl::SCRAM_SHA_256_PLUS
+    } else {
+        sasl::SCRAM_SHA_256
+    };
 
     let mut buf = BytesMut::new();
     frontend::sasl_initial_response(mechanism, scram.message(), &mut buf).map_err(Error::encode)?;
