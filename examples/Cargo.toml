@@ -1,6 +1,6 @@
 [package]
 name = "gaussdb-examples"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["GaussDB Rust Team <gaussdb-rust@example.com>"]
 description = "Examples for the gaussdb-rust library"
@@ -12,9 +12,9 @@ categories = ["database"]
 
 [dependencies]
 # Core GaussDB libraries
-gaussdb = { path = "../gaussdb", version = "0.1.0" }
-tokio-gaussdb = { path = "../tokio-gaussdb", version = "0.1.0" }
-gaussdb-types = { path = "../gaussdb-types", version = "0.1.0" }
+gaussdb = { path = "../gaussdb", version = "0.1.1" }
+tokio-gaussdb = { path = "../tokio-gaussdb", version = "0.1.1" }
+gaussdb-types = { path = "../gaussdb-types", version = "0.1.1" }
 
 # Async runtime
 tokio = { version = "1.0", features = ["full"] }

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-09-17
+
 ### Added
 - SCRAM-SHA-256 兼容性修复功能 (2025-09-17)
   - 新增 `GaussDbScramSha256` 认证器，支持 GaussDB 特有的 SASL 消息格式

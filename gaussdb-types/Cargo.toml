@@ -1,6 +1,6 @@
 [package]
 name = "gaussdb-types"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Steven Fackler <sfackler@gmail.com>", "louloulin <729883852@qq.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -34,8 +34,8 @@ with-time-0_3 = ["time-03"]
 [dependencies]
 bytes = "1.0"
 fallible-iterator = "0.2"
-gaussdb-protocol = { version = "0.1.0", path = "../gaussdb-protocol" }
-gaussdb-derive = { version = "0.1.0", optional = true, path = "../gaussdb-derive" }
+gaussdb-protocol = { version = "0.1.1", path = "../gaussdb-protocol" }
+gaussdb-derive = { version = "0.1.1", optional = true, path = "../gaussdb-derive" }
 
 array-init = { version = "2", optional = true }
 bit-vec-06 = { version = "0.6", package = "bit-vec", optional = true }
