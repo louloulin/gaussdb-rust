@@ -83,7 +83,7 @@ impl ChannelBinding {
         ChannelBinding(ChannelBindingInner::TlsServerEndPoint(signature))
     }
 
-    fn gs2_header(&self) -> &'static str {
+    pub(crate) fn gs2_header(&self) -> &'static str {
         match self.0 {
             ChannelBindingInner::Unrequested => "y,,",
             ChannelBindingInner::Unsupported => "n,,",
@@ -91,7 +91,7 @@ impl ChannelBinding {
         }
     }
 
-    fn cbind_data(&self) -> &[u8] {
+    pub(crate) fn cbind_data(&self) -> &[u8] {
         match self.0 {
             ChannelBindingInner::Unrequested | ChannelBindingInner::Unsupported => &[],
             ChannelBindingInner::TlsServerEndPoint(ref buf) => buf,

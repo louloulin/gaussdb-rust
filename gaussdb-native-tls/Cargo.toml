@@ -1,6 +1,6 @@
 [package]
 name = "gaussdb-native-tls"
-version = "0.5.1"
+version = "0.1.1"
 authors = ["Steven Fackler <sfackler@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -19,9 +19,9 @@ runtime = ["tokio-gaussdb/runtime"]
 native-tls = { version = "0.2", features = ["alpn"] }
 tokio = "1.0"
 tokio-native-tls = "0.3"
-tokio-gaussdb = { version = "0.1.0", path = "../tokio-gaussdb", default-features = false }
+tokio-gaussdb = { version = "0.1.1", path = "../tokio-gaussdb", default-features = false }
 
 [dev-dependencies]
 futures-util = "0.3"
 tokio = { version = "1.0", features = ["macros", "net", "rt"] }
-gaussdb = { version = "0.1.0", path = "../gaussdb" }
+gaussdb = { version = "0.1.1", path = "../gaussdb" }

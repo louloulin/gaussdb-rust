@@ -176,6 +176,7 @@ mod simple_query;
 mod socket;
 mod statement;
 pub mod tls;
+pub mod adaptive_auth;
 mod to_statement;
 mod transaction;
 mod transaction_builder;

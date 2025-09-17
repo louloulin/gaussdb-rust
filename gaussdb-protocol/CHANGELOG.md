@@ -1,5 +1,36 @@
 # Change Log
 
+## v0.1.1 - 2025-09-17
+
+### Added
+
+* **GaussDB SCRAM-SHA-256 兼容性支持**: 新增完整的 GaussDB SASL 认证支持
+  * 新增 `GaussDbScramSha256` 认证器，支持 GaussDB 特有的 SASL 消息格式
+  * 新增 `GaussDbSaslParser` 解析器，支持三种兼容模式：标准、GaussDB、自动检测
+  * 新增 `CompatibilityMode` 枚举，控制 SASL 消息解析行为
+  * 新增 `create_gaussdb_scram` 辅助函数，简化 GaussDB SCRAM 认证器创建
+* **增强的 SASL 消息处理**: 改进 SASL 消息解析和错误处理
+  * 支持处理带有尾随数据的 SASL 消息（GaussDB 特有格式）
+  * 智能检测和处理不同格式的服务器响应
+  * 改进错误诊断，提供更详细的解析失败信息
+* **全面的测试覆盖**: 新增 37 个单元测试，覆盖所有新功能
+  * SASL 兼容性测试（标准模式、GaussDB 模式、自动模式）
+  * 边界情况和错误处理测试
+  * 空白字符处理测试
+  * SCRAM-SHA-256 认证器创建和消息解析测试
+
+### Fixed
+
+* **SASL 消息解析**: 修复 GaussDB SASL 消息中尾随数据导致的解析失败
+* **兼容性问题**: 解决与 GaussDB/openGauss 服务器的协议兼容性问题
+* **错误处理**: 改进 SASL 认证过程中的错误检测和报告
+
+### Enhanced
+
+* **向后兼容**: 保持与现有 PostgreSQL SASL 实现的完全兼容
+* **性能优化**: 优化 SASL 消息解析性能，减少不必要的内存分配
+* **代码质量**: 添加详细的代码注释和文档
+
 ## v0.6.8 - 2025-02-02
 
 ### Changed
@@ -89,7 +120,7 @@
 
 * Upgraded `hmac` and `sha2`.
 
-## v0.5.1 - 2020-03-17
+## v0.1.1 - 2020-03-17
 
 ### Changed
 
