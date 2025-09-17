@@ -6,13 +6,13 @@
 //! # Examples Overview
 //!
 //! ## Synchronous Examples (gaussdb)
-//! - [`sync_basic`] - Basic CRUD operations and connection management
-//! - [`sync_authentication`] - GaussDB authentication methods
-//! - [`sync_transactions`] - Transaction management and savepoints
+//! - `sync_basic` - Basic CRUD operations and connection management
+//! - `sync_authentication` - GaussDB authentication methods
+//! - `sync_transactions` - Transaction management and savepoints
 //!
 //! ## Asynchronous Examples (tokio-gaussdb)
-//! - [`async_basic`] - Async CRUD operations and concurrent processing
-//! - [`async_authentication`] - Async authentication and connection pooling
+//! - `async_basic` - Async CRUD operations and concurrent processing
+//! - `async_authentication` - Async authentication and connection pooling
 //!
 //! # Quick Start
 //!

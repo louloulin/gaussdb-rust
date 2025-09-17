@@ -19,6 +19,7 @@ pub struct AdaptiveAuthManager {
     /// 认证方法偏好顺序
     auth_preferences: Vec<AuthMethod>,
     /// 服务器兼容性缓存
+    #[allow(dead_code)]
     compatibility_cache: HashMap<String, ServerCompatibility>,
     /// 认证统计信息
     stats: AuthStats,
@@ -43,6 +44,7 @@ pub enum AuthMethod {
 
 /// 服务器兼容性信息
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 struct ServerCompatibility {
     /// 支持的认证方法
     supported_methods: Vec<AuthMethod>,

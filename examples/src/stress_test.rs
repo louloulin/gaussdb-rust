@@ -2,7 +2,7 @@
 //!
 //! 测试在高并发情况下的 SCRAM 兼容性和连接稳定性
 
-use tokio_gaussdb::{connect, NoTls, Client, Error};
+use tokio_gaussdb::{connect, NoTls};
 use std::env;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
