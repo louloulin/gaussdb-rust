@@ -56,12 +56,59 @@
 
 ## 🚀 发布策略
 
+### 推荐方式：Cargo Workspace 发布
+
+#### 方式一：使用 cargo-workspaces 工具 (推荐)
+```bash
+# 1. 安装 cargo-workspaces 工具
+cargo install cargo-workspaces
+
+# 2. 干运行检查
+cargo workspaces publish --dry-run
+
+# 3. 执行发布
+cargo workspaces publish --yes
+```
+
+#### 方式二：使用 workspace 命令
+```bash
+# 干运行检查所有包
+cargo publish -p gaussdb-protocol --dry-run
+cargo publish -p gaussdb-derive --dry-run
+cargo publish -p gaussdb-types --dry-run
+cargo publish -p tokio-gaussdb --dry-run
+cargo publish -p gaussdb --dry-run
+cargo publish -p gaussdb-native-tls --dry-run
+cargo publish -p gaussdb-openssl --dry-run
+
+# 实际发布（按依赖顺序）
+cargo publish -p gaussdb-protocol
+cargo publish -p gaussdb-derive
+cargo publish -p gaussdb-types
+cargo publish -p tokio-gaussdb
+cargo publish -p gaussdb
+cargo publish -p gaussdb-native-tls
+cargo publish -p gaussdb-openssl
+```
+
+#### 方式三：使用自动化脚本
+```bash
+# 干运行
+bash scripts/publish-to-crates.sh --dry-run
+
+# 实际发布
+bash scripts/publish-to-crates.sh
+
+# 只发布特定包
+bash scripts/publish-to-crates.sh --package tokio-gaussdb
+```
+
 ### 发布顺序 (重要)
 ```
 1. gaussdb-protocol (基础协议)
    ↓
 2. gaussdb-derive (宏支持)
-   ↓  
+   ↓
 3. gaussdb-types (类型系统)
    ↓
 4. tokio-gaussdb (异步客户端)
@@ -69,28 +116,6 @@
 5. gaussdb (同步客户端)
    ↓
 6. gaussdb-native-tls & gaussdb-openssl (TLS 支持)
-```
-
-### 发布命令序列
-```bash
-# 1. 发布基础协议包
-cargo publish --manifest-path gaussdb-protocol/Cargo.toml
-
-# 2. 发布宏派生包
-cargo publish --manifest-path gaussdb-derive/Cargo.toml
-
-# 3. 发布类型包
-cargo publish --manifest-path gaussdb-types/Cargo.toml
-
-# 4. 发布异步客户端
-cargo publish --manifest-path tokio-gaussdb/Cargo.toml
-
-# 5. 发布同步客户端
-cargo publish --manifest-path gaussdb/Cargo.toml
-
-# 6. 发布 TLS 支持包
-cargo publish --manifest-path gaussdb-native-tls/Cargo.toml
-cargo publish --manifest-path gaussdb-openssl/Cargo.toml
 ```
 
 ---
