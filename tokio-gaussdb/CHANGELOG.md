@@ -232,7 +232,7 @@
 * Added accessors for `Config` fields.
 * Added a `GenericClient` trait implemented for `Client` and `Transaction` and covering shared functionality.
 
-## v0.5.1 - 2019-12-25
+## v0.1.1 - 2019-12-25
 
 ### Fixed
 
