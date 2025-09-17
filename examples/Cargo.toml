@@ -19,6 +19,10 @@ gaussdb-types = { path = "../gaussdb-types", version = "0.1.0" }
 # Async runtime
 tokio = { version = "1.0", features = ["full"] }
 
+# TLS support
+native-tls = "0.2"
+tokio-native-tls = "0.3"
+
 # Utilities
 futures-util = "0.3"
 chrono = { version = "0.4", features = ["serde"] }
@@ -56,6 +60,22 @@ path = "src/simple_sync.rs"
 [[bin]]
 name = "simple_async"
 path = "src/simple_async.rs"
+
+[[bin]]
+name = "gaussdb_auth_debug"
+path = "src/gaussdb_auth_debug.rs"
+
+[[bin]]
+name = "gaussdb_auth_solutions"
+path = "src/gaussdb_auth_solutions.rs"
+
+[[bin]]
+name = "scram_compatibility_test"
+path = "src/scram_compatibility_test.rs"
+
+[[bin]]
+name = "stress_test"
+path = "src/stress_test.rs"
 
 [dev-dependencies]
 # Testing utilities
