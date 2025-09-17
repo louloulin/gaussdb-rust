@@ -452,7 +452,35 @@ impl Config {
     }
 
     /// Opens a connection to a PostgreSQL database.
+    ///
+    /// This method intelligently detects if it's being called from within an existing
+    /// tokio runtime and handles the connection appropriately to avoid runtime conflicts.
     pub fn connect<T>(&self, tls: T) -> Result<Client, Error>
+    where
+        T: MakeTlsConnect<Socket> + 'static + Send,
+        T::TlsConnect: Send,
+        T::Stream: Send,
+        <T::TlsConnect as TlsConnect<Socket>>::Future: Send,
+    {
+        use tokio::runtime::Handle;
+
+        // Try to detect if we're already in a tokio runtime
+        match Handle::try_current() {
+            Ok(_handle) => {
+                // We're in an existing runtime, use a separate thread to avoid nested runtime
+                log::debug!("Detected existing tokio runtime, creating connection in separate thread");
+                self.connect_in_thread(tls)
+            }
+            Err(_) => {
+                // No existing runtime, create our own
+                log::debug!("No existing tokio runtime detected, creating new runtime");
+                self.connect_with_new_runtime(tls)
+            }
+        }
+    }
+
+    /// Creates a connection using a new runtime (when not in an async context)
+    fn connect_with_new_runtime<T>(&self, tls: T) -> Result<Client, Error>
     where
         T: MakeTlsConnect<Socket> + 'static + Send,
         T::TlsConnect: Send,
@@ -465,9 +493,34 @@ impl Config {
             .unwrap(); // FIXME don't unwrap
 
         let (client, connection) = runtime.block_on(self.config.connect(tls))?;
-
         let connection = Connection::new(runtime, connection, self.notice_callback.clone());
         Ok(Client::new(connection, client))
+    }
+
+    /// Creates a connection in a separate thread (when already in an async context)
+    fn connect_in_thread<T>(&self, tls: T) -> Result<Client, Error>
+    where
+        T: MakeTlsConnect<Socket> + 'static + Send,
+        T::TlsConnect: Send,
+        T::Stream: Send,
+        <T::TlsConnect as TlsConnect<Socket>>::Future: Send,
+    {
+        let config = self.config.clone();
+        let notice_callback = self.notice_callback.clone();
+
+        std::thread::scope(|s| {
+            s.spawn(|| {
+                // Create a new runtime in a separate thread to avoid conflicts
+                let runtime = runtime::Builder::new_current_thread()
+                    .enable_all()
+                    .build()
+                    .unwrap(); // FIXME don't unwrap
+
+                let (client, connection) = runtime.block_on(config.connect(tls))?;
+                let connection = Connection::new(runtime, connection, notice_callback);
+                Ok::<Client, Error>(Client::new(connection, client))
+            }).join().unwrap()
+        })
     }
 }
 
