@@ -109,7 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 | Database | Version | Authentication | Status |
 |----------|---------|----------------|--------|
-| GaussDB | 2.0+ | SHA256, MD5_SHA256, MD5 | ✅ Full Support |
+| GaussDB | 0.1+ | SHA256, MD5_SHA256, MD5 | ✅ Full Support |
 | OpenGauss | 3.0+ | SHA256, MD5_SHA256, MD5 | ✅ Full Support |
 | PostgreSQL | 10+ | SCRAM-SHA-256, MD5 | ✅ Full Support |
 
@@ -206,7 +206,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 This project is licensed under either of
 
-- Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+- Apache License, Version 0.1, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-0.1)
 - MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
 at your option.
