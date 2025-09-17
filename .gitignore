@@ -10,7 +10,9 @@ plan/
 scripts/bat/
 scripts/*.ps1
 scripts/*.bat
-
 # 临时文件
 *.tmp
 *.log
+
+# 源码参考目录
+source/
