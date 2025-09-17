@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 description = "A native, asynchronous GaussDB client based on PostgreSQL"
 repository = "https://github.com/HuaweiCloudDeveloper/gaussdb-rust"
 readme = "../README.md"
-keywords = ["database", "gaussdb", "opengauss", "postgresql", "sql", "async"]
+keywords = ["database", "gaussdb", "opengauss", "postgresql", "async"]
 categories = ["database"]
 
 [lib]
