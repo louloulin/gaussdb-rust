@@ -62,7 +62,7 @@ fn main() -> Result<(), Error> {
 
     // Query and display data
     println!("\n📖 Querying all users...");
-    let rows = client.query("SELECT id, name, email, age, created_at FROM sync_example_users ORDER BY id", &[])?;
+    let rows = client.query("SELECT id, name, email, age, created_at::text FROM sync_example_users ORDER BY id", &[])?;
     
     println!("   Found {} users:", rows.len());
     println!("   ┌─────┬─────────────────┬─────────────────────┬─────┬─────────────────────┐");

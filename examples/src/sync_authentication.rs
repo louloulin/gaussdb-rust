@@ -91,7 +91,7 @@ fn test_config_builder_auth() -> Result<(), Error> {
         .dbname(&env::var("GAUSSDB_DATABASE").unwrap_or_else(|_| "postgres".to_string()));
 
     println!("🔗 Connecting with Config builder...");
-    println!("   Host: {}", config.get_hosts()[0]);
+    println!("   Host: {:?}", config.get_hosts()[0]);
     println!("   Port: {}", config.get_ports()[0]);
     println!("   User: {}", config.get_user().unwrap_or("(not set)"));
     println!("   Database: {}", config.get_dbname().unwrap_or("(not set)"));

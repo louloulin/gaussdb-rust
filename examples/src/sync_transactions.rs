@@ -67,9 +67,9 @@ fn setup_test_tables(client: &mut Client) -> Result<(), Error> {
     ")?;
 
     // Insert initial account data
-    client.execute("INSERT INTO accounts (name, balance) VALUES ($1, $2)", &[&"Alice", &1000.00])?;
-    client.execute("INSERT INTO accounts (name, balance) VALUES ($1, $2)", &[&"Bob", &500.00])?;
-    client.execute("INSERT INTO accounts (name, balance) VALUES ($1, $2)", &[&"Charlie", &750.00])?;
+    client.execute("INSERT INTO accounts (name, balance) VALUES ('Alice', 1000.00)", &[])?;
+    client.execute("INSERT INTO accounts (name, balance) VALUES ('Bob', 500.00)", &[])?;
+    client.execute("INSERT INTO accounts (name, balance) VALUES ('Charlie', 750.00)", &[])?;
 
     println!("   ✅ Test tables created and populated");
     Ok(())
@@ -92,24 +92,24 @@ fn basic_transaction_example(client: &mut Client) -> Result<(), Error> {
     
     // Debit from Alice
     let updated_rows = transaction.execute(
-        "UPDATE accounts SET balance = balance - $1 WHERE name = $2",
-        &[&amount, &"Alice"],
+        &format!("UPDATE accounts SET balance = balance - {} WHERE name = 'Alice'", amount),
+        &[],
     )?;
     println!("   💸 Debited ${:.2} from Alice ({} rows updated)", amount, updated_rows);
 
     // Credit to Bob
     let updated_rows = transaction.execute(
-        "UPDATE accounts SET balance = balance + $1 WHERE name = $2",
-        &[&amount, &"Bob"],
+        &format!("UPDATE accounts SET balance = balance + {} WHERE name = 'Bob'", amount),
+        &[],
     )?;
     println!("   💰 Credited ${:.2} to Bob ({} rows updated)", amount, updated_rows);
 
     // Record transaction
     transaction.execute(
-        "INSERT INTO transactions (from_account_id, to_account_id, amount, description) 
-         VALUES ((SELECT id FROM accounts WHERE name = $1), 
-                 (SELECT id FROM accounts WHERE name = $2), $3, $4)",
-        &[&"Alice", &"Bob", &amount, &"Basic transfer example"],
+        &format!("INSERT INTO transactions (from_account_id, to_account_id, amount, description) 
+         VALUES ((SELECT id FROM accounts WHERE name = 'Alice'), 
+                 (SELECT id FROM accounts WHERE name = 'Bob'), {}, 'Basic transfer example')", amount),
+        &[],
     )?;
     println!("   📝 Transaction recorded");
 
@@ -139,30 +139,37 @@ fn rollback_transaction_example(client: &mut Client) -> Result<(), Error> {
 
     // Debit from Bob
     transaction.execute(
-        "UPDATE accounts SET balance = balance - $1 WHERE name = $2",
-        &[&amount, &"Bob"],
+        &format!("UPDATE accounts SET balance = balance - {} WHERE name = 'Bob'", amount),
+        &[],
     )?;
     println!("   💸 Debited ${:.2} from Bob", amount);
 
     // Simulate an error condition - try to credit to non-existent account
-    match transaction.execute(
-        "UPDATE accounts SET balance = balance + $1 WHERE name = $2",
-        &[&amount, &"NonExistentUser"],
+    let should_rollback = match transaction.execute(
+        &format!("UPDATE accounts SET balance = balance + {} WHERE name = 'NonExistentUser'", amount),
+        &[],
     ) {
         Ok(rows) => {
             if rows == 0 {
                 println!("   ❌ No rows updated - recipient account not found");
-                println!("   🔄 Rolling back transaction...");
-                transaction.rollback()?;
-                println!("   ✅ Transaction rolled back successfully");
+                true
+            } else {
+                false
             }
         }
         Err(e) => {
             println!("   ❌ Error occurred: {}", e);
-            println!("   🔄 Rolling back transaction...");
-            transaction.rollback()?;
-            println!("   ✅ Transaction rolled back successfully");
+            true
         }
+    };
+
+    if should_rollback {
+        println!("   🔄 Rolling back transaction...");
+        transaction.rollback()?;
+        println!("   ✅ Transaction rolled back successfully");
+    } else {
+        // If not rolling back, we still need to drop the transaction
+        drop(transaction);
     }
 
     // Show balances - should be unchanged
@@ -187,12 +194,12 @@ fn savepoint_example(client: &mut Client) -> Result<(), Error> {
 
     // First operation - Alice to Charlie
     transaction.execute(
-        "UPDATE accounts SET balance = balance - $1 WHERE name = $2",
-        &[&amount1, &"Alice"],
+        &format!("UPDATE accounts SET balance = balance - {} WHERE name = 'Alice'", amount1),
+        &[],
     )?;
     transaction.execute(
-        "UPDATE accounts SET balance = balance + $1 WHERE name = $2",
-        &[&amount1, &"Charlie"],
+        &format!("UPDATE accounts SET balance = balance + {} WHERE name = 'Charlie'", amount1),
+        &[],
     )?;
     println!("   ✅ First transfer: Alice -> Charlie (${:.2})", amount1);
 
@@ -202,21 +209,21 @@ fn savepoint_example(client: &mut Client) -> Result<(), Error> {
 
     // Second operation - Bob to Charlie (this will be rolled back)
     transaction.execute(
-        "UPDATE accounts SET balance = balance - $1 WHERE name = $2",
-        &[&amount2, &"Bob"],
+        &format!("UPDATE accounts SET balance = balance - {} WHERE name = 'Bob'", amount2),
+        &[],
     )?;
     transaction.execute(
-        "UPDATE accounts SET balance = balance + $1 WHERE name = $2",
-        &[&amount2, &"Charlie"],
+        &format!("UPDATE accounts SET balance = balance + {} WHERE name = 'Charlie'", amount2),
+        &[],
     )?;
     println!("   ✅ Second transfer: Bob -> Charlie (${:.2})", amount2);
 
     // Show intermediate state
-    let rows = transaction.query("SELECT name, balance FROM accounts ORDER BY name", &[])?;
+    let rows = transaction.query("SELECT name, balance::float8 FROM accounts ORDER BY name", &[])?;
     println!("   📊 Intermediate balances:");
     for row in &rows {
         let name: &str = row.get(0);
-        let balance: rust_decimal::Decimal = row.get(1);
+        let balance: f64 = row.get(1);
         println!("      - {}: ${:.2}", name, balance);
     }
 
@@ -254,8 +261,8 @@ fn isolation_level_example(client: &mut Client) -> Result<(), Error> {
             .start()?;
 
         // Read current balance
-        let row = transaction.query_one("SELECT balance FROM accounts WHERE name = $1", &[&"Alice"])?;
-        let balance: rust_decimal::Decimal = row.get(0);
+        let row = transaction.query_one("SELECT balance::float8 FROM accounts WHERE name = $1", &[&"Alice"])?;
+        let balance: f64 = row.get(0);
         println!("      Alice's balance: ${:.2}", balance);
 
         // Commit transaction
@@ -287,22 +294,22 @@ fn batch_transaction_example(client: &mut Client) -> Result<(), Error> {
     for (from, to, amount, description) in operations {
         // Debit
         transaction.execute(
-            "UPDATE accounts SET balance = balance - $1 WHERE name = $2",
-            &[&amount, &from],
+            &format!("UPDATE accounts SET balance = balance - {} WHERE name = '{}'", amount, from),
+            &[],
         )?;
 
         // Credit
         transaction.execute(
-            "UPDATE accounts SET balance = balance + $1 WHERE name = $2",
-            &[&amount, &to],
+            &format!("UPDATE accounts SET balance = balance + {} WHERE name = '{}'", amount, to),
+            &[],
         )?;
 
         // Record
         transaction.execute(
-            "INSERT INTO transactions (from_account_id, to_account_id, amount, description) 
-             VALUES ((SELECT id FROM accounts WHERE name = $1), 
-                     (SELECT id FROM accounts WHERE name = $2), $3, $4)",
-            &[&from, &to, &amount, &description],
+            &format!("INSERT INTO transactions (from_account_id, to_account_id, amount, description) 
+             VALUES ((SELECT id FROM accounts WHERE name = '{}'), 
+                     (SELECT id FROM accounts WHERE name = '{}'), {}, '{}')", from, to, amount, description),
+            &[],
         )?;
 
         println!("   ✅ Batch operation: {} -> {} (${:.2})", from, to, amount);
@@ -317,7 +324,7 @@ fn batch_transaction_example(client: &mut Client) -> Result<(), Error> {
     // Show transaction history
     println!("   📜 Transaction history:");
     let rows = client.query("
-        SELECT t.amount, t.description, t.created_at,
+        SELECT t.amount::float8, t.description, t.created_at::text,
                a1.name as from_account, a2.name as to_account
         FROM transactions t
         JOIN accounts a1 ON t.from_account_id = a1.id
@@ -327,15 +334,15 @@ fn batch_transaction_example(client: &mut Client) -> Result<(), Error> {
     ", &[])?;
 
     for row in &rows {
-        let amount: rust_decimal::Decimal = row.get(0);
+        let amount: f64 = row.get(0);
         let description: &str = row.get(1);
-        let created_at: chrono::NaiveDateTime = row.get(2);
+        let created_at: &str = row.get(2);
         let from_account: &str = row.get(3);
         let to_account: &str = row.get(4);
         
         println!("      - {} -> {}: ${:.2} ({}) at {}", 
                  from_account, to_account, amount, description, 
-                 created_at.format("%H:%M:%S"));
+                 created_at);
     }
 
     Ok(())
@@ -344,10 +351,10 @@ fn batch_transaction_example(client: &mut Client) -> Result<(), Error> {
 /// Helper function to show account balances
 fn show_account_balances(client: &mut Client, title: &str) -> Result<(), Error> {
     println!("   📊 {}:", title);
-    let rows = client.query("SELECT name, balance FROM accounts ORDER BY name", &[])?;
+    let rows = client.query("SELECT name, balance::float8 FROM accounts ORDER BY name", &[])?;
     for row in &rows {
         let name: &str = row.get(0);
-        let balance: rust_decimal::Decimal = row.get(1);
+        let balance: f64 = row.get(1);
         println!("      - {}: ${:.2}", name, balance);
     }
     Ok(())

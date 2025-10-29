@@ -12,7 +12,6 @@
 
 use tokio_gaussdb::{connect, Config, Error, NoTls};
 use std::env;
-use futures_util::future;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -63,9 +62,9 @@ async fn test_connection_string_auth() -> Result<(), Error> {
             println!("   ✅ Async connection successful!");
             
             // Test the connection with a simple query
-            let row = client.query_one("SELECT version(), current_timestamp", &[]).await?;
+            let row = client.query_one("SELECT version(), current_timestamp::text", &[]).await?;
             let version: &str = row.get(0);
-            let timestamp: chrono::NaiveDateTime = row.get(1);
+            let timestamp: &str = row.get(1);
             
             println!("   📊 Database version: {}", version);
             println!("   🕐 Server time: {}", timestamp);
@@ -117,7 +116,7 @@ async fn test_config_builder_auth() -> Result<(), Error> {
         .dbname(&env::var("GAUSSDB_DATABASE").unwrap_or_else(|_| "postgres".to_string()));
 
     println!("🔗 Connecting asynchronously with Config builder...");
-    println!("   Host: {}", config.get_hosts()[0]);
+    println!("   Host: {:?}", config.get_hosts()[0]);
     println!("   Port: {}", config.get_ports()[0]);
     println!("   User: {}", config.get_user().unwrap_or("(not set)"));
     println!("   Database: {}", config.get_dbname().unwrap_or("(not set)"));
@@ -258,7 +257,7 @@ async fn test_concurrent_connections() -> Result<(), Error> {
         match result {
             Ok(Ok(row)) => {
                 let conn_id: i32 = row.get(0);
-                let pid: i32 = row.get(1);
+                let pid: i64 = row.get(1);
                 println!("   ✅ Connection {}: ID={}, PID={}", i + 1, conn_id, pid);
             }
             Ok(Err(e)) => {
@@ -341,9 +340,9 @@ async fn test_auth_scenario_async(host: &str, port: u16, user: &str, password: &
             println!("      ✅ Async connection successful!");
             
             // Quick test query
-            if let Ok(row) = client.query_one("SELECT 1 as test, now() as timestamp", &[]).await {
+            if let Ok(row) = client.query_one("SELECT 1 as test, now()::text as timestamp", &[]).await {
                 let test: i32 = row.get(0);
-                let timestamp: chrono::NaiveDateTime = row.get(1);
+                let timestamp: &str = row.get(1);
                 println!("      ✅ Test query result: {}, timestamp: {}", test, timestamp);
             }
 
