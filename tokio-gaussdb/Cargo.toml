@@ -72,6 +72,7 @@ socket2 = { version = "0.5", features = ["all"] }
 futures-executor = "0.3"
 criterion = "0.6"
 env_logger = "0.11"
+gaussdb-test-helpers = { path = "../gaussdb-test-helpers" }
 tokio = { version = "1.0", features = [
     "macros",
     "net",

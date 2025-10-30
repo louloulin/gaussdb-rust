@@ -1,5 +1,6 @@
 use gaussdb::{Client, NoTls};
 use gaussdb_types::{FromSql, ToSql};
+use gaussdb_test_helpers::*;
 
 #[test]
 fn round_trip() {
@@ -9,7 +10,7 @@ fn round_trip() {
 
     assert_eq!(
         Client::connect(
-            "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+            &get_test_conn_str(),
             NoTls
         )
         .unwrap()

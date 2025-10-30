@@ -1,0 +1,11 @@
+[package]
+name = "gaussdb-test-helpers"
+version = "0.1.0"
+edition = "2018"
+publish = false
+authors = ["louloulin <729883852@qq.com>"]
+description = "Shared test helpers for GaussDB Rust client"
+
+[dependencies]
+dotenvy = "0.15"
+
