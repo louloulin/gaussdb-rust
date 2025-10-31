@@ -9,7 +9,9 @@ repository = "https://github.com/HuaweiCloudDeveloper/gaussdb-rust"
 readme = "../README.md"
 
 [features]
-default = []
+default = ["opengauss"]
+opengauss = []
+gauss = []
 js = ["getrandom/wasm_js"]
 
 [dependencies]

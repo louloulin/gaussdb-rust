@@ -21,6 +21,9 @@ all-features = true
 circle-ci = { repository = "HuaweiCloudDeveloper/gaussdb-rust" }
 
 [features]
+default = ["opengauss"]
+opengauss = ["tokio-gaussdb/opengauss"]
+gauss = ["tokio-gaussdb/gauss"]
 array-impls = ["tokio-gaussdb/array-impls"]
 with-bit-vec-0_6 = ["tokio-gaussdb/with-bit-vec-0_6"]
 with-chrono-0_4 = ["tokio-gaussdb/with-chrono-0_4"]

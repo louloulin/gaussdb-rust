@@ -451,6 +451,7 @@ fn portal() {
 }
 
 #[test]
+#[cfg(feature = "opengauss")]
 fn cancel_query() {
     let mut client = Client::connect(
         &get_test_conn_str(),

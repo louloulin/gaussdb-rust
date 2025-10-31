@@ -240,6 +240,7 @@ async fn custom_enum() {
 }
 
 #[tokio::test]
+#[cfg(feature = "opengauss")]
 async fn custom_domain() {
     let client = connect("user=postgres").await;
 
