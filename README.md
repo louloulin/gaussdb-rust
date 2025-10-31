@@ -1,6 +1,12 @@
 # GaussDB-Rust
 
-GaussDB and OpenGauss support for Rust.
+[![Crates.io](https://img.shields.io/crates/v/gaussdb.svg)](https://crates.io/crates/gaussdb)
+[![Documentation](https://docs.rs/gaussdb/badge.svg)](https://docs.rs/gaussdb)
+[![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
+
+[English](README.md) | [中文](README-zh.md)
+
+A native, high-performance Rust driver for GaussDB and OpenGauss databases with full PostgreSQL compatibility.
 
 ## gaussdb [![Latest Version](https://img.shields.io/crates/v/gaussdb.svg)](https://crates.io/crates/gaussdb)
 
@@ -32,7 +38,31 @@ TLS support for gaussdb and tokio-gaussdb via native-tls.
 
 TLS support for gaussdb and tokio-gaussdb via openssl.
 
-# Features
+# ✨ Features
+
+## 🔐 Flexible Feature Support (v0.1.1+)
+
+GaussDB-Rust now supports flexible feature flags to customize functionality:
+
+- **`opengauss`** (default): Full OpenGauss support including `cancel_query` and domain types
+- **`gauss`**: GaussDB enterprise edition support
+- **No features**: Pure PostgreSQL compatibility
+
+```toml
+# Default (OpenGauss)
+[dependencies]
+gaussdb = "0.1"
+
+# GaussDB enterprise
+[dependencies]
+gaussdb = { version = "0.1", default-features = false, features = ["gauss"] }
+
+# PostgreSQL only
+[dependencies]
+gaussdb = { version = "0.1", default-features = false }
+```
+
+📖 See [FEATURES.md](FEATURES.md) for detailed feature documentation.
 
 ## GaussDB Authentication Support
 
@@ -180,7 +210,7 @@ The test suite supports both GaussDB and OpenGauss environments. Connection stri
 - **Password**: Gaussdb@123
 - **Database**: postgres
 
-## Documentation
+## 📚 Documentation
 
 ### API Documentation
 
@@ -189,12 +219,21 @@ The test suite supports both GaussDB and OpenGauss environments. Connection stri
 - [gaussdb-types](https://docs.rs/gaussdb-types) - Type conversion utilities
 - [gaussdb-protocol](https://docs.rs/gaussdb-protocol) - Low-level protocol implementation
 
-### Guides and Examples
+### Feature Guides
 
-- [GaussDB Connection Guide](docs/connection-guide.md)
+- **[FEATURES.md](FEATURES.md)** - Complete feature documentation (English)
+- **[FEATURE_GUIDE_CN.md](FEATURE_GUIDE_CN.md)** - Feature usage guide (中文)
+- **[FEATURE_SUMMARY.md](FEATURE_SUMMARY.md)** - Quick reference
+
+### Technical Documentation
+
 - [Authentication Methods](docs/authentication.md)
-- [Migration from rust-postgres](docs/migration.md)
 - [GaussDB vs PostgreSQL Differences](docs/GaussDB-PostgreSQL-差异分析报告.md)
+- [Implementation Summary](IMPLEMENTATION_SUMMARY.md)
+
+### Examples
+
+Check out the [examples/](examples/) directory for complete working examples.
 
 ## Contributing
 
