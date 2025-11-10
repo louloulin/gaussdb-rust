@@ -1,5 +1,6 @@
 use crate::{test_type, test_type_asymmetric};
 use gaussdb::{Client, NoTls};
+use gaussdb_test_helpers::*;
 use gaussdb_types::{FromSql, ToSql, WrongType};
 use std::error::Error;
 
@@ -13,7 +14,7 @@ fn defaults() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -62,7 +63,7 @@ fn name_overrides() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -109,7 +110,7 @@ fn rename_all_overrides() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -154,7 +155,7 @@ fn wrong_name() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -191,7 +192,7 @@ fn extra_field() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -227,7 +228,7 @@ fn missing_field() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -262,7 +263,7 @@ fn wrong_type() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -296,7 +297,7 @@ fn raw_ident_field() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -343,7 +344,7 @@ fn generics() {
     const PRICE: f64 = 15.50;
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();

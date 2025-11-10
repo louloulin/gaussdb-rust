@@ -77,6 +77,26 @@ path = "src/scram_compatibility_test.rs"
 name = "stress_test"
 path = "src/stress_test.rs"
 
+[[bin]]
+name = "async_authentication"
+path = "src/async_authentication.rs"
+
+[[bin]]
+name = "async_basic"
+path = "src/async_basic.rs"
+
+[[bin]]
+name = "sync_authentication"
+path = "src/sync_authentication.rs"
+
+[[bin]]
+name = "sync_basic"
+path = "src/sync_basic.rs"
+
+[[bin]]
+name = "sync_transactions"
+path = "src/sync_transactions.rs"
+
 [dev-dependencies]
 # Testing utilities
 tempfile = "3.0"

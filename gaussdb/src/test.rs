@@ -10,11 +10,12 @@ use tokio_gaussdb::NoTls;
 use super::*;
 use crate::binary_copy::{BinaryCopyInWriter, BinaryCopyOutIter};
 use fallible_iterator::FallibleIterator;
+use gaussdb_test_helpers::*;
 
 #[test]
 fn prepare() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -29,7 +30,7 @@ fn prepare() {
 #[test]
 fn query_prepared() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb dbname=postgres password=Gaussdb@123",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -43,7 +44,7 @@ fn query_prepared() {
 #[test]
 fn query_unprepared() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb dbname=postgres password=Gaussdb@123",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -56,7 +57,7 @@ fn query_unprepared() {
 #[test]
 fn transaction_commit() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -85,7 +86,7 @@ fn transaction_commit() {
 #[test]
 fn transaction_rollback() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -110,7 +111,7 @@ fn transaction_rollback() {
 #[test]
 fn transaction_drop() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -135,12 +136,12 @@ fn transaction_drop() {
 #[test]
 fn transaction_drop_immediate_rollback() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
     let mut client2 = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -172,7 +173,7 @@ fn transaction_drop_immediate_rollback() {
 #[test]
 fn nested_transactions() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -227,7 +228,7 @@ fn nested_transactions() {
 #[test]
 fn savepoints() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -282,7 +283,7 @@ fn savepoints() {
 #[test]
 fn copy_in() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -309,7 +310,7 @@ fn copy_in() {
 #[test]
 fn copy_in_abort() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -332,7 +333,7 @@ fn copy_in_abort() {
 #[test]
 fn binary_copy_in() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -361,7 +362,7 @@ fn binary_copy_in() {
 #[test]
 fn copy_out() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -391,7 +392,7 @@ fn binary_copy_out() {
     // 影响：仅影响二进制格式COPY，文本格式COPY功能正常
     // 解决方案：使用文本格式COPY或开发GaussDB特定的二进制格式适配器
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -421,7 +422,7 @@ fn binary_copy_out() {
 #[test]
 fn portal() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -450,9 +451,10 @@ fn portal() {
 }
 
 #[test]
+#[cfg(feature = "opengauss")]
 fn cancel_query() {
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -480,7 +482,7 @@ fn notifications_iter() {
     // 影响：仅影响实时通知功能，不影响基础数据库操作
     // 解决方案：使用轮询机制或等待GaussDB后续版本支持
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -510,7 +512,7 @@ fn notifications_blocking_iter() {
     // 影响：仅影响实时通知功能，不影响基础数据库操作
     // 解决方案：使用轮询机制或等待GaussDB后续版本支持
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -526,7 +528,7 @@ fn notifications_blocking_iter() {
 
     thread::spawn(|| {
         let mut client = Client::connect(
-            "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+            &get_test_conn_str(),
             NoTls,
         )
         .unwrap();
@@ -557,7 +559,7 @@ fn notifications_timeout_iter() {
     // 影响：仅影响实时通知功能，不影响基础数据库操作
     // 解决方案：使用轮询机制或等待GaussDB后续版本支持
     let mut client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -573,7 +575,7 @@ fn notifications_timeout_iter() {
 
     thread::spawn(|| {
         let mut client = Client::connect(
-            "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+            &get_test_conn_str(),
             NoTls,
         )
         .unwrap();
@@ -603,7 +605,7 @@ fn notifications_timeout_iter() {
 fn notice_callback() {
     let (notice_tx, notice_rx) = mpsc::sync_channel(64);
     let mut client = Config::from_str(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
     )
     .unwrap()
     .notice_callback(move |n| notice_tx.send(n).unwrap())
@@ -620,7 +622,7 @@ fn notice_callback() {
 #[test]
 fn explicit_close() {
     let client = Client::connect(
-        "host=localhost port=5433 user=gaussdb password=Gaussdb@123 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();

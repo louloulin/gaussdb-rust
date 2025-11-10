@@ -1,5 +1,6 @@
 use crate::test_type;
 use gaussdb::{error::DbError, Client, NoTls};
+use gaussdb_test_helpers::*;
 use gaussdb_types::{FromSql, ToSql, WrongType};
 use std::error::Error;
 
@@ -12,7 +13,7 @@ fn defaults() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -40,7 +41,7 @@ fn name_overrides() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -73,7 +74,7 @@ fn rename_all_overrides() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -103,7 +104,7 @@ fn wrong_name() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -125,7 +126,7 @@ fn extra_variant() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -145,7 +146,7 @@ fn missing_variant() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -165,7 +166,7 @@ fn allow_mismatch_enums() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -186,7 +187,7 @@ fn missing_enum_variant() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -211,7 +212,7 @@ fn allow_mismatch_and_renaming() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -231,7 +232,7 @@ fn wrong_name_and_allow_mismatch() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();

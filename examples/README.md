@@ -14,7 +14,8 @@ Before running the examples, make sure you have:
      -e GS_USERNAME=gaussdb \
      -e GS_DATABASE=postgres \
      -p 5433:5432 \
-     -d enmotech/opengauss:latest
+     -d opengauss/opengauss:latest
+
    ```
 
 2. **Rust environment**
@@ -46,7 +47,7 @@ Before running the examples, make sure you have:
 | [`async_connection_pool.rs`](async_connection_pool.rs) | Connection pooling | High-performance connection management |
 
 ### Advanced Examples
-
+ 
 | Example | Description | Features |
 |---------|-------------|----------|
 | [`tls_connection.rs`](tls_connection.rs) | TLS/SSL connections | Secure connections |

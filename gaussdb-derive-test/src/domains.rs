@@ -1,6 +1,7 @@
 use crate::test_type;
 use gaussdb::{Client, NoTls};
 use gaussdb_types::{FromSql, ToSql, WrongType};
+use gaussdb_test_helpers::*;
 use std::error::Error;
 
 #[test]
@@ -9,7 +10,7 @@ fn defaults() {
     struct SessionId(Vec<u8>);
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -36,7 +37,7 @@ fn name_overrides() {
     struct SessionId(Vec<u8>);
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -62,7 +63,7 @@ fn wrong_name() {
     struct SessionId(Vec<u8>);
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -85,7 +86,7 @@ fn wrong_type() {
     struct SessionId(i32);
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();
@@ -114,7 +115,7 @@ fn domain_in_composite() {
     }
 
     let mut conn = Client::connect(
-        "user=gaussdb password=Gaussdb@123 host=localhost port=5433 dbname=postgres",
+        &get_test_conn_str(),
         NoTls,
     )
     .unwrap();

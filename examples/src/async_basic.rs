@@ -63,32 +63,20 @@ async fn main() -> Result<(), Error> {
         ("Notebook", "Stationery", 5.99),
     ];
 
-    // Insert products concurrently
-    let mut insert_tasks = Vec::new();
+    // Insert products sequentially (client cannot be cloned)
     for (name, category, price) in products {
-        let client = client.clone();
-        let task = tokio::spawn(async move {
-            client.execute(
-                "INSERT INTO async_example_products (name, category, price) VALUES ($1, $2, $3)",
-                &[&name, &category, &price],
-            ).await
-        });
-        insert_tasks.push(task);
-    }
-
-    // Wait for all inserts to complete
-    for (i, task) in insert_tasks.into_iter().enumerate() {
-        match task.await {
-            Ok(Ok(rows)) => println!("   ✓ Insert {} completed: {} row(s) affected", i + 1, rows),
-            Ok(Err(e)) => println!("   ✗ Insert {} failed: {}", i + 1, e),
-            Err(e) => println!("   ✗ Insert {} task failed: {}", i + 1, e),
-        }
+        let sql = format!(
+            "INSERT INTO async_example_products (name, category, price) VALUES ('{}', '{}', {})",
+            name, category, price
+        );
+        client.execute(&sql, &[]).await?;
+        println!("   ✓ Inserted: {} - {} (${:.2})", name, category, price);
     }
 
     // Query and display data
     println!("\n📖 Querying all products...");
     let rows = client.query(
-        "SELECT id, name, category, price, in_stock, created_at FROM async_example_products ORDER BY id", 
+        "SELECT id, name, category, price::float8, in_stock, created_at::text FROM async_example_products ORDER BY id", 
         &[]
     ).await?;
     
@@ -101,7 +89,7 @@ async fn main() -> Result<(), Error> {
         let id: i32 = row.get(0);
         let name: &str = row.get(1);
         let category: &str = row.get(2);
-        let price: rust_decimal::Decimal = row.get(3);
+        let price: f64 = row.get(3);
         let in_stock: bool = row.get(4);
         let created_at: String = row.get::<_, String>(5);
         
@@ -113,13 +101,13 @@ async fn main() -> Result<(), Error> {
 
     // Demonstrate prepared statements with async
     println!("\n🔍 Using prepared statements asynchronously...");
-    let stmt = client.prepare("SELECT name, price FROM async_example_products WHERE category = $1").await?;
+    let stmt = client.prepare("SELECT name, price::float8 FROM async_example_products WHERE category = $1").await?;
     let rows = client.query(&stmt, &[&"Electronics"]).await?;
     
     println!("   Electronics products:");
     for row in &rows {
         let name: &str = row.get(0);
-        let price: rust_decimal::Decimal = row.get(1);
+        let price: f64 = row.get(1);
         println!("   - {} (${:.2})", name, price);
     }
 
@@ -147,16 +135,15 @@ async fn main() -> Result<(), Error> {
 
     // Demonstrate streaming results
     println!("\n🌊 Streaming query results...");
-    let mut stream = client.query_raw(
-        "SELECT name, price FROM async_example_products WHERE price > $1 ORDER BY price DESC",
-        [&50.0f64]
+    let rows = client.query(
+        "SELECT name, price::float8 FROM async_example_products WHERE price::float8 > $1 ORDER BY price DESC",
+        &[&50.0f64]
     ).await?;
 
     println!("   Expensive products (>$50):");
-    use futures_util::TryStreamExt;
-    while let Some(row) = stream.try_next().await? {
+    for row in &rows {
         let name: &str = row.get(0);
-        let price: rust_decimal::Decimal = row.get(1);
+        let price: f64 = row.get(1);
         println!("   - {} (${:.2})", name, price);
     }
 
@@ -169,11 +156,11 @@ async fn main() -> Result<(), Error> {
     println!("   Applied 10% discount to {} electronics product(s)", updated_rows);
 
     // Verify updates
-    let rows = client.query("SELECT name, price FROM async_example_products WHERE category = $1", &[&"Electronics"]).await?;
+    let rows = client.query("SELECT name, price::float8 FROM async_example_products WHERE category = $1", &[&"Electronics"]).await?;
     println!("   Updated electronics prices:");
     for row in &rows {
         let name: &str = row.get(0);
-        let price: rust_decimal::Decimal = row.get(1);
+        let price: f64 = row.get(1);
         println!("   - {} (${:.2})", name, price);
     }
 
@@ -199,22 +186,22 @@ async fn main() -> Result<(), Error> {
         SELECT 
             COUNT(*) as total_products,
             COUNT(*) FILTER (WHERE in_stock = true) as in_stock_count,
-            AVG(price) as avg_price,
-            MAX(price) as max_price,
-            MIN(price) as min_price
+            AVG(price)::float8 as avg_price,
+            MAX(price)::float8 as max_price,
+            MIN(price)::float8 as min_price
         FROM async_example_products
     ", &[]).await?;
 
     let total: i64 = stats.get(0);
     let in_stock: i64 = stats.get(1);
-    let avg_price: Option<rust_decimal::Decimal> = stats.get(2);
-    let max_price: rust_decimal::Decimal = stats.get(3);
-    let min_price: rust_decimal::Decimal = stats.get(4);
+    let avg_price: Option<f64> = stats.get(2);
+    let max_price: f64 = stats.get(3);
+    let min_price: f64 = stats.get(4);
 
     println!("   📈 Product Statistics:");
     println!("   - Total products: {}", total);
     println!("   - In stock: {}", in_stock);
-    println!("   - Average price: ${:.2}", avg_price.unwrap_or_default());
+    println!("   - Average price: ${:.2}", avg_price.unwrap_or(0.0));
     println!("   - Price range: ${:.2} - ${:.2}", min_price, max_price);
 
     // Clean up

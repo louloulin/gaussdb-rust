@@ -6,6 +6,7 @@ edition = "2018"
 
 [dev-dependencies]
 trybuild = "1.0"
+gaussdb-test-helpers = { path = "../gaussdb-test-helpers" }
 
 gaussdb-types = { path = "../gaussdb-types", features = ["derive"] }
 gaussdb = { path = "../gaussdb" }

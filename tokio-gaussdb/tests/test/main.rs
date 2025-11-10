@@ -25,6 +25,8 @@ mod parse;
 mod runtime;
 mod types;
 
+use gaussdb_test_helpers::*;
+
 pin_project! {
     /// Polls `F` at most `polls_left` times returning `Some(F::Output)` if
     /// [`Future`] returned [`Poll::Ready`] or [`None`] otherwise.
@@ -55,24 +57,26 @@ impl<F: Future> Future for Cancellable<F> {
 }
 
 async fn connect_raw(s: &str) -> Result<(Client, Connection<TcpStream, NoTlsStream>), Error> {
-    let socket = TcpStream::connect("127.0.0.1:5433").await.unwrap();
+    let (host, port) = get_test_host_port();
+    let addr = format!("{}:{}", host, port);
+    let socket = TcpStream::connect(&addr).await.unwrap();
     let config = s.parse::<Config>().unwrap();
     config.connect_raw(socket, NoTls).await
 }
 
 async fn connect(s: &str) -> Client {
-    // 如果连接字符串不包含完整配置，使用默认的gaussdb配置
     let connection_string = if s.contains("password") && s.contains("dbname") {
         s.to_string()
-    } else if s == "user=postgres" {
-        "user=gaussdb password=Gaussdb@123 dbname=postgres".to_string()
-    } else if s.starts_with("user=postgres ") {
-        s.replace(
-            "user=postgres",
-            "user=gaussdb password=Gaussdb@123 dbname=postgres",
-        )
     } else {
-        format!("{} password=Gaussdb@123 dbname=postgres", s)
+        let base_conn_str = get_test_conn_str();
+        if s == "user=postgres" || s.is_empty() {
+            base_conn_str
+        } else if s.starts_with("user=postgres ") {
+            let extra_params = s.strip_prefix("user=postgres ").unwrap();
+            format!("{} {}", base_conn_str, extra_params)
+        } else {
+            format!("{} {}", base_conn_str, s)
+        }
     };
 
     let (client, connection) = connect_raw(&connection_string).await.unwrap();
@@ -115,7 +119,7 @@ async fn plain_password_wrong() {
 #[tokio::test]
 async fn plain_password_ok() {
     // 使用现有的gaussdb用户进行测试
-    connect("user=gaussdb password=Gaussdb@123 dbname=postgres").await;
+    connect("").await;
 }
 
 #[tokio::test]
@@ -138,7 +142,7 @@ async fn md5_password_wrong() {
 #[tokio::test]
 async fn md5_password_ok() {
     // 使用现有的gaussdb用户进行测试
-    connect("user=gaussdb password=Gaussdb@123 dbname=postgres").await;
+    connect("").await;
 }
 
 #[tokio::test]
@@ -161,7 +165,7 @@ async fn scram_password_wrong() {
 #[tokio::test]
 async fn scram_password_ok() {
     // 使用现有的gaussdb用户进行测试
-    connect("user=gaussdb password=Gaussdb@123 dbname=postgres").await;
+    connect("").await;
 }
 
 #[tokio::test]
@@ -236,6 +240,7 @@ async fn custom_enum() {
 }
 
 #[tokio::test]
+#[cfg(feature = "opengauss")]
 async fn custom_domain() {
     let client = connect("user=postgres").await;
 
@@ -839,7 +844,7 @@ async fn notifications() {
     // 错误：Error { kind: Db, cause: Some(DbError { severity: "ERROR", code: SqlState(E0A000), message: "LISTEN statement is not yet supported." }) }
     // 影响：仅影响实时通知功能，不影响基础数据库操作
     // 解决方案：使用轮询机制或等待GaussDB后续版本支持
-    let (client, mut connection) = connect_raw("user=gaussdb password=Gaussdb@123 dbname=postgres")
+    let (client, mut connection) = connect_raw(&get_test_conn_str())
         .await
         .unwrap();
 

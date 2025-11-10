@@ -496,6 +496,7 @@ async fn test_slice_range() {
 }
 
 #[tokio::test]
+#[cfg(feature = "opengauss")]
 async fn domain() {
     #[derive(Debug, PartialEq)]
     struct SessionId(Vec<u8>);

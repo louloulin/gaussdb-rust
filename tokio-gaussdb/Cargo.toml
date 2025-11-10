@@ -24,8 +24,10 @@ all-features = true
 circle-ci = { repository = "sfackler/rust-postgres" }
 
 [features]
-default = ["runtime"]
+default = ["runtime", "opengauss"]
 runtime = ["tokio/net", "tokio/time"]
+opengauss = ["gaussdb-protocol/opengauss"]
+gauss = ["gaussdb-protocol/gauss"]
 
 array-impls = ["gaussdb-types/array-impls"]
 with-bit-vec-0_6 = ["gaussdb-types/with-bit-vec-0_6"]
@@ -72,6 +74,7 @@ socket2 = { version = "0.5", features = ["all"] }
 futures-executor = "0.3"
 criterion = "0.6"
 env_logger = "0.11"
+gaussdb-test-helpers = { path = "../gaussdb-test-helpers" }
 tokio = { version = "1.0", features = [
     "macros",
     "net",
